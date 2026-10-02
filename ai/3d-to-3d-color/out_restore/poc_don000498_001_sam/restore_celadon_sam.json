@@ -1,0 +1,99 @@
+{
+  "model": "C:/ai/poc_inputs/don000498_001/don000498_001_30000.obj",
+  "material": "celadon",
+  "preset": {
+    "group": "ceramic",
+    "target_ab": [
+      -5.0,
+      5.0
+    ],
+    "pristine_L": 67.5,
+    "pbr": [
+      0.0,
+      0.18
+    ],
+    "w_c": 0.05
+  },
+  "mode": "conserved",
+  "geometry": "don000498_001_30000",
+  "texture_size": [
+    8192,
+    8192
+  ],
+  "valid_texel_fraction": 0.5584758222103119,
+  "target_ab": [
+    -4.658272649966382,
+    4.375418187535349
+  ],
+  "target_source": "blend 0.38*healthy median + 0.62*preset (PoC rule)",
+  "glaze_dominant_ab": [
+    -3.3569443761805875,
+    4.282611539071818
+  ],
+  "thresholds": {
+    "healthy_quantile": 0.15,
+    "grow_dE": 6.0,
+    "min_healthy_frac": 0.03,
+    "damage_dE_full": 30.0,
+    "protect_dE": 25.0,
+    "near_black_L": 25.0,
+    "incised_atten": 0.3,
+    "clamp_frac": 0.0007,
+    "plausible_dE": 15.0,
+    "damage_report_d": 0.2
+  },
+  "healthy_vs_preset_dE_ab": 1.8735659746524915,
+  "target_mode": "auto",
+  "protect_dark": "all",
+  "protect_dark_thr_fixed_L": null,
+  "chroma_strength": 0.85,
+  "chroma_var_keep": 0.15,
+  "pristine_skipped": null,
+  "normal_map": true,
+  "crack_geometry": null,
+  "uv_seams": null,
+  "wear_mask": "out_restore/sam_don000498_001/mask_sam_wear.png",
+  "tone": {
+    "strength": 0.8,
+    "target_L": 64.55667373649956,
+    "surface_mean_L_before": 54.348790721267875,
+    "gain": 0.744560693802223,
+    "surface_mean_L_after": 62.51509713345322
+  },
+  "destain": {
+    "strength": 0.7,
+    "size_px": 512,
+    "mean_lift_L_damage": 0.2800750157239189
+  },
+  "metrics": {
+    "L_ssim_valid": 0.9844812821032758,
+    "healthy_dE_mean": 7.060156204673876,
+    "damage_dE_ab_to_target_before": 2.6646106460094594,
+    "damage_dE_ab_to_target_after": 0.6274319575655897,
+    "healthy_fraction": 0.1391621123882758,
+    "damage_fraction": 0.0213386128507521,
+    "protect_fraction": 0.0007191555689344219,
+    "protect_parts_fraction": {
+      "holes": 0.0,
+      "near_black": 0.0007191555689344219,
+      "painted": 0.0,
+      "inlay": 0.0,
+      "wear": 0.0044706752996997385,
+      "incised": 0.10000000533636752
+    },
+    "dark_spot_fraction": 9.018461110074373e-06,
+    "dark_protect_threshold_L": 23.5,
+    "alpha_sidecar_used": false,
+    "cracks": {
+      "enabled": false,
+      "components": 0,
+      "fill_fraction": 0.0
+    }
+  },
+  "smoothing": null,
+  "outputs": {
+    "conserved": "out_restore/poc_don000498_001_sam\\don000498_001_30000_restored_conserved_celadon_sam.glb"
+  },
+  "provenance": "ai_inferred - colour restoration hypothesis (rule-based v1); damage map = FR-UI-008 layer",
+  "elapsed_s": 273.00082445144653
+}

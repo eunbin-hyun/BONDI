@@ -1,0 +1,42 @@
+{
+  "texture": "C:/ai/poc_inputs/ssu022891/ssu022891-001-30000.jpg",
+  "work_size": 2048,
+  "weights": "sam2.1_b.pt",
+  "prompts": {
+    "seam": [
+      [
+        710,
+        190
+      ],
+      [
+        730,
+        250
+      ],
+      [
+        755,
+        310
+      ],
+      [
+        780,
+        370
+      ],
+      [
+        800,
+        430
+      ]
+    ],
+    "wear": [],
+    "negative": []
+  },
+  "masks": {
+    "seam": {
+      "fraction_of_valid": 0.0,
+      "boxes": {
+        "boxes_tried": 5,
+        "boxes_kept": 0
+      },
+      "components": 0
+    }
+  },
+  "elapsed_s": 12.516920804977417
+}

@@ -1,0 +1,78 @@
+{
+  "model": "C:/ai/poc_inputs/duk006294/duk006294-000-30000.obj",
+  "material": "whiteware",
+  "preset": {
+    "group": "ceramic",
+    "target_ab": [
+      -2.0,
+      6.0
+    ],
+    "pristine_L": 80.0,
+    "pbr": [
+      0.0,
+      0.12
+    ],
+    "w_c": 0.05
+  },
+  "mode": "conserved",
+  "geometry": "duk006294-000-30000",
+  "texture_size": [
+    8192,
+    8192
+  ],
+  "valid_texel_fraction": 0.6891927123069763,
+  "target_ab": [
+    -3.0644269300885343,
+    8.095456588561444
+  ],
+  "target_source": "blend 0.38*healthy median + 0.62*preset (PoC rule)",
+  "glaze_dominant_ab": [
+    -0.27913805657927543,
+    0.5310213742909148
+  ],
+  "thresholds": {
+    "healthy_quantile": 0.15,
+    "grow_dE": 6.0,
+    "min_healthy_frac": 0.03,
+    "damage_dE_full": 30.0,
+    "protect_dE": 25.0,
+    "near_black_L": 25.0,
+    "incised_atten": 0.3,
+    "clamp_frac": 0.0007,
+    "plausible_dE": 15.0,
+    "damage_report_d": 0.2
+  },
+  "healthy_vs_preset_dE_ab": 6.185018426535824,
+  "target_mode": "auto",
+  "protect_dark": "all",
+  "protect_dark_thr_fixed_L": 58.8,
+  "metrics": {
+    "L_ssim_valid": 0.9995795117946904,
+    "healthy_dE_mean": 0.0,
+    "damage_dE_ab_to_target_before": 11.520476150048541,
+    "damage_dE_ab_to_target_after": 7.224712345257575,
+    "healthy_fraction": 0.12357859105133863,
+    "damage_fraction": 0.23969733371905522,
+    "protect_fraction": 0.6200884133381938,
+    "protect_parts_fraction": {
+      "holes": 0.0,
+      "near_black": 0.5946140337904484,
+      "painted": 0.12118650993904125,
+      "incised": 0.1
+    },
+    "dark_spot_fraction": 7.491739627345952e-05,
+    "dark_protect_threshold_L": 58.8,
+    "alpha_sidecar_used": false,
+    "cracks": {
+      "enabled": false,
+      "components": 0,
+      "fill_fraction": 0.0
+    }
+  },
+  "smoothing": null,
+  "outputs": {
+    "conserved": "out_restore/poc_duk006294_thr150\\duk006294-000-30000_restored_conserved_whiteware_thr150.glb"
+  },
+  "provenance": "ai_inferred - colour restoration hypothesis (rule-based v1); damage map = FR-UI-008 layer",
+  "elapsed_s": 254.1998746395111
+}

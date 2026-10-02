@@ -1,0 +1,13 @@
+# virtual restoration output (relative paths fixed)
+newmtl GiltBronze
+Ka 1 1 1
+Kd 1 1 1
+map_Kd bon009435-000-30000_pristine.jpg
+Ks 0.35 0.30 0.18
+Ns 90
+illum 2
+Pm 1.0
+Pr 0.35
+map_d bon009435-000-30000_alpha.jpg
+
+

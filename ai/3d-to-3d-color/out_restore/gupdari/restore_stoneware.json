@@ -1,0 +1,79 @@
+{
+  "model": "out/sample_2026-09-04T170957.096_colormatched_reinhard.glb",
+  "material": "stoneware",
+  "preset": {
+    "group": "ceramic",
+    "target_ab": [
+      0.0,
+      3.0
+    ],
+    "pristine_L": 62.0,
+    "pbr": [
+      0.0,
+      0.6
+    ],
+    "w_c": 0.05
+  },
+  "mode": "both",
+  "geometry": "geometry_0",
+  "texture_size": [
+    2048,
+    2048
+  ],
+  "valid_texel_fraction": 0.6923980712890625,
+  "target_ab": [
+    -0.41319911470378834,
+    3.0978218307085243
+  ],
+  "target_source": "blend 0.38*healthy median + 0.62*preset (PoC rule)",
+  "glaze_dominant_ab": [
+    0.30165513433819807,
+    5.306676156047819
+  ],
+  "thresholds": {
+    "healthy_quantile": 0.15,
+    "grow_dE": 6.0,
+    "min_healthy_frac": 0.03,
+    "damage_dE_full": 30.0,
+    "protect_dE": 25.0,
+    "near_black_L": 25.0,
+    "incised_atten": 0.3,
+    "clamp_frac": 0.0007,
+    "plausible_dE": 15.0,
+    "damage_report_d": 0.2
+  },
+  "healthy_vs_preset_dE_ab": 1.1174225231564612,
+  "target_mode": "auto",
+  "metrics": {
+    "L_ssim_valid": 0.986486533214213,
+    "healthy_dE_mean": 0.0,
+    "damage_dE_ab_to_target_before": 4.826881467171904,
+    "damage_dE_ab_to_target_after": 4.18935215548247,
+    "healthy_fraction": 0.09835413590585539,
+    "damage_fraction": 0.24425231945699363,
+    "protect_fraction": 0.008857391960684928,
+    "protect_parts_fraction": {
+      "holes": 0.0,
+      "near_black": 0.008857391960684928,
+      "painted": 0.0,
+      "incised": 0.10000006886748794
+    },
+    "dark_spot_fraction": 0.00468367785441964
+  },
+  "smoothing": {
+    "vertices_unique": 124357,
+    "disp_mean": 0.0010227471565439404,
+    "disp_p95": 0.0025810846969113637,
+    "disp_max_before_clamp": 0.007306012437257358,
+    "clamp_mm_equiv": 0.0011282193257119949,
+    "clamped_fraction": 0.39399470878197446,
+    "protected_vertex_fraction": 0.18451715625175905,
+    "volume_change_pct": null
+  },
+  "outputs": {
+    "conserved": "out_restore/gupdari\\sample_2026-09-04T170957.096_colormatched_reinhard_restored_conserved_stoneware.glb",
+    "pristine": "out_restore/gupdari\\sample_2026-09-04T170957.096_colormatched_reinhard_restored_pristine_stoneware.glb"
+  },
+  "provenance": "ai_inferred - colour restoration hypothesis (rule-based v1); damage map = FR-UI-008 layer",
+  "elapsed_s": 39.201573848724365
+}

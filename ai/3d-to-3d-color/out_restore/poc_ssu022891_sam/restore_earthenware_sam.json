@@ -1,0 +1,111 @@
+{
+  "model": "C:/ai/poc_inputs/ssu022891/ssu022891-001-30000.obj",
+  "material": "earthenware",
+  "preset": {
+    "group": "ceramic",
+    "target_ab": [
+      13.0,
+      30.0
+    ],
+    "pristine_L": 50.0,
+    "pbr": [
+      0.0,
+      0.75
+    ],
+    "w_c": 0.05
+  },
+  "mode": "conserved",
+  "geometry": "ssu022891-001-30000",
+  "texture_size": [
+    8192,
+    8192
+  ],
+  "valid_texel_fraction": 0.6127236038446426,
+  "target_ab": [
+    10.99938385636824,
+    27.03983590438714
+  ],
+  "target_source": "blend 0.38*healthy median + 0.62*preset (PoC rule)",
+  "glaze_dominant_ab": [
+    6.508585392837359,
+    16.852381550715858
+  ],
+  "thresholds": {
+    "healthy_quantile": 0.15,
+    "grow_dE": 6.0,
+    "min_healthy_frac": 0.03,
+    "damage_dE_full": 30.0,
+    "protect_dE": 25.0,
+    "near_black_L": 25.0,
+    "incised_atten": 0.3,
+    "clamp_frac": 0.0007,
+    "plausible_dE": 15.0,
+    "damage_report_d": 0.2
+  },
+  "healthy_vs_preset_dE_ab": 9.402155565276152,
+  "target_mode": "auto",
+  "protect_dark": "off",
+  "protect_dark_thr_fixed_L": null,
+  "chroma_strength": 0.85,
+  "chroma_var_keep": 0.15,
+  "pristine_skipped": null,
+  "normal_map": true,
+  "crack_geometry": {
+    "vertices_unique": 190712,
+    "disp_mean": 0.02282994049495419,
+    "disp_p95": 0.040595919595585526,
+    "disp_max_before_clamp": 2.093948442655663,
+    "clamp_mm_equiv": 10.723713484949897,
+    "clamped_fraction": 0.0,
+    "protected_vertex_fraction": 0.9467679013381434,
+    "crack_vertex_fraction": 0.07758161884342259
+  },
+  "uv_seams": {
+    "mean_abs_dL_across_seams": 0.6855486144159773
+  },
+  "wear_mask": null,
+  "tone": {
+    "strength": 0.8,
+    "target_L": 45.554777312758134,
+    "surface_mean_L_before": 31.180737114680355,
+    "gain": 0.9812783440662205,
+    "surface_mean_L_after": 42.679969273142575
+  },
+  "destain": {
+    "strength": 0.7,
+    "size_px": 512,
+    "mean_lift_L_damage": 2.122453242367803
+  },
+  "metrics": {
+    "L_ssim_valid": 0.898287524268949,
+    "healthy_dE_mean": 11.421568929018834,
+    "damage_dE_ab_to_target_before": 10.205683642393558,
+    "damage_dE_ab_to_target_after": 1.1692039871684237,
+    "healthy_fraction": 0.047680784529168074,
+    "damage_fraction": 0.6863278053784383,
+    "protect_fraction": 0.0,
+    "protect_parts_fraction": {
+      "holes": 0.0,
+      "near_black": 0.0,
+      "painted": 0.0,
+      "inlay": 0.0,
+      "wear": 0.0,
+      "incised": 0.10000001215977408
+    },
+    "dark_spot_fraction": 7.028349418890477e-06,
+    "dark_protect_threshold_L": 20.852740911582238,
+    "alpha_sidecar_used": false,
+    "cracks": {
+      "enabled": true,
+      "components": 95,
+      "fill_fraction": 0.021316983787494817
+    }
+  },
+  "smoothing": null,
+  "outputs": {
+    "conserved": "out_restore/poc_ssu022891_sam\\ssu022891-001-30000_restored_conserved_earthenware_sam.glb"
+  },
+  "provenance": "ai_inferred - colour restoration hypothesis (rule-based v1); damage map = FR-UI-008 layer",
+  "elapsed_s": 334.83017897605896,
+  "crack_mask": "out_restore/sam_ssu022891/mask_seam_semiauto.png"
+}

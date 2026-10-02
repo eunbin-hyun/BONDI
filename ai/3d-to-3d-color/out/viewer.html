@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>굽다리바리 색 맞춤 비교</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #d9d9d9; font-family: system-ui, sans-serif; overflow: hidden; }
+  #ui { position: fixed; top: 8px; left: 8px; background: rgba(255,255,255,.95); padding: 8px 10px; border-radius: 6px;
+        font-size: 13px; box-shadow: 0 1px 4px #0004; line-height: 1.7; max-width: 340px; }
+  #ui select, #ui label { margin-right: 8px; }
+  #photo { position: fixed; right: 8px; top: 8px; width: 240px; border: 1px solid #888; background: #fff; }
+  #cap { position: fixed; right: 8px; top: 8px; margin-top: 0; width: 240px; text-align: center; font-size: 11px; color: #333;
+         transform: translateY(calc(240px * 2 / 3 + 4px)); }
+  #status { color: #555; }
+  canvas { display: block; }
+</style>
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+               "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/" } }
+</script>
+</head>
+<body>
+<div id="ui">
+  <div>
+    모델:
+    <select id="model">
+      <option value="orig">색 맞춤 전 (원본)</option>
+      <option value="reinhard" selected>색 맞춤 후 — reinhard (기본)</option>
+      <option value="hist">색 맞춤 후 — hist</option>
+      <option value="chroma">색 맞춤 후 — chroma</option>
+      <option value="normal">색 맞춤 후 (reinhard) + 노멀맵</option>
+    </select>
+  </div>
+  <div>
+    <label><input type="checkbox" id="unlit"> 조명 끄기 (텍스처 원색 그대로)</label>
+    <label><input type="checkbox" id="spin" checked> 자동 회전</label>
+  </div>
+  <div>
+    <label><input type="checkbox" id="nrm" checked> 노멀맵 켜기</label>
+    세기 <input type="range" id="nscale" min="0" max="3" step="0.1" value="1" style="width:110px;vertical-align:middle">
+    <span id="nval">1.0</span>
+    <span id="nnote" style="color:#a60"></span>
+  </div>
+  <div>배경: <input type="color" id="bgcol" value="#d9d9d9"> <span style="color:#666">(사진 배경 ≈ #c9c9cb)</span></div>
+  <div id="status">불러오는 중…</div>
+  <div style="color:#666">마우스 드래그 회전 · 휠 확대 · 우클릭 이동</div>
+</div>
+<img id="photo" src="photo_small.jpg" alt="입력 사진">
+<div id="cap">입력 사진 (e뮤지엄 굽다리바리)</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const FILES = {
+  orig:     '../sample_2026-09-04T170957.096.glb',
+  reinhard: 'sample_2026-09-04T170957.096_colormatched_reinhard.glb',
+  hist:     'sample_2026-09-04T170957.096_colormatched_hist.glb',
+  chroma:   'sample_2026-09-04T170957.096_colormatched_chroma.glb',
+  normal:   'sample_2026-09-04T170957.096_colormatched_reinhard_normal.glb',
+};
+let normalOn = true;
+let normalScale = 1.0;
+
+function applyNormal(root) {
+  let has = false;
+  root.traverse(o => {
+    if (!o.isMesh) return;
+    const m = o.userData.lit || o.material;
+    if (o.userData.nmap === undefined) o.userData.nmap = m.normalMap || null;   // remember the map from the file
+    if (o.userData.nmap) {
+      has = true;
+      m.normalMap = normalOn ? o.userData.nmap : null;
+      m.normalScale.set(normalScale, normalScale);
+      m.needsUpdate = true;
+    }
+  });
+  document.getElementById('nnote').textContent = has ? '' : '(이 모델에는 노멀맵이 없음)';
+}
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.NoToneMapping;          // keep texture colours faithful
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xd9d9d9);
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;   // neutral studio light
+scene.add(new THREE.HemisphereLight(0xffffff, 0x999999, 0.35));
+const key = new THREE.DirectionalLight(0xffffff, 0.7); key.position.set(2, 3, 2); scene.add(key);
+
+const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.01, 100);
+camera.position.set(0, 0.6, 2.6);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.autoRotate = true; controls.autoRotateSpeed = 1.2;
+
+const loader = new GLTFLoader();
+const cache = {};
+let current = null;
+let unlit = false;
+
+function fit(obj) {
+  const box = new THREE.Box3().setFromObject(obj);
+  const size = box.getSize(new THREE.Vector3()).length();
+  const c = box.getCenter(new THREE.Vector3());
+  obj.position.sub(c);
+  obj.scale.setScalar(1.6 / size);
+  obj.position.multiplyScalar(1.6 / size);
+}
+
+function applyUnlit(root, on) {
+  root.traverse(o => {
+    if (!o.isMesh) return;
+    if (!o.userData.lit) o.userData.lit = o.material;
+    if (on) {
+      if (!o.userData.unlit) o.userData.unlit = new THREE.MeshBasicMaterial({ map: o.userData.lit.map, side: THREE.DoubleSide });
+      o.material = o.userData.unlit;
+    } else {
+      o.material = o.userData.lit;
+      o.material.side = THREE.DoubleSide;
+    }
+  });
+}
+
+async function show(k) {
+  const status = document.getElementById('status');
+  if (current) scene.remove(current);
+  if (!cache[k]) {
+    status.textContent = `${k} 불러오는 중…`;
+    cache[k] = await new Promise((res, rej) => loader.load(FILES[k], g => res(g.scene), xhr => {
+      if (xhr.total) status.textContent = `${k} ${Math.round(100 * xhr.loaded / xhr.total)} %`;
+    }, rej)).catch(e => { status.textContent = '로드 실패: ' + e; throw e; });
+    fit(cache[k]);
+  }
+  current = cache[k];
+  applyUnlit(current, unlit);
+  applyNormal(current);
+  scene.add(current);
+  let tris = 0; current.traverse(o => { if (o.isMesh) tris += o.geometry.index ? o.geometry.index.count / 3 : o.geometry.attributes.position.count / 3; });
+  status.textContent = `${FILES[k].split('/').pop()} · 삼각형 ${Math.round(tris).toLocaleString()}`;
+}
+
+document.getElementById('model').addEventListener('change', e => show(e.target.value));
+document.getElementById('unlit').addEventListener('change', e => { unlit = e.target.checked; if (current) applyUnlit(current, unlit); });
+document.getElementById('spin').addEventListener('change', e => controls.autoRotate = e.target.checked);
+document.getElementById('nrm').addEventListener('change', e => { normalOn = e.target.checked; if (current) applyNormal(current); });
+document.getElementById('nscale').addEventListener('input', e => { normalScale = parseFloat(e.target.value); document.getElementById('nval').textContent = normalScale.toFixed(1); if (current) applyNormal(current); });
+document.getElementById('bgcol').addEventListener('input', e => scene.background.set(e.target.value));
+window.addEventListener('resize', () => { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); });
+
+show('reinhard');
+(function loop() { controls.update(); renderer.render(scene, camera); requestAnimationFrame(loop); })();
+</script>
+</body>
+</html>

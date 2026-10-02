@@ -1,0 +1,77 @@
+{
+  "model": "C:/ai/trellis2/outputs/sword_rgba_trellis2_512.glb",
+  "material": "bronze",
+  "preset": {
+    "group": "metal",
+    "target_ab": [
+      17.0,
+      52.0
+    ],
+    "pristine_L": 57.0,
+    "pbr": [
+      1.0,
+      0.4
+    ],
+    "w_b": 0.5,
+    "w_a": 0.3
+  },
+  "mode": "both",
+  "geometry": "geometry_0",
+  "texture_size": [
+    2048,
+    2048
+  ],
+  "valid_texel_fraction": 0.8995628356933594,
+  "target_ab": [
+    17.0,
+    52.0
+  ],
+  "target_source": "preset bronze (healthy colour dE_ab 49.0 from preset > 15 (bright patina, not original surface))",
+  "glaze_dominant_ab": null,
+  "thresholds": {
+    "healthy_quantile": 0.15,
+    "grow_dE": 6.0,
+    "min_healthy_frac": 0.03,
+    "damage_dE_full": 30.0,
+    "protect_dE": 25.0,
+    "near_black_L": 25.0,
+    "incised_atten": 0.3,
+    "clamp_frac": 0.0007,
+    "plausible_dE": 15.0,
+    "damage_report_d": 0.2
+  },
+  "healthy_vs_preset_dE_ab": 49.0462551142405,
+  "target_mode": "auto",
+  "metrics": {
+    "L_ssim_valid": 0.9934689217413042,
+    "healthy_dE_mean": null,
+    "damage_dE_ab_to_target_before": 50.87656571708258,
+    "damage_dE_ab_to_target_after": 11.940157218146043,
+    "healthy_fraction": 0.0,
+    "damage_fraction": 1.0,
+    "protect_fraction": 0.0,
+    "protect_parts_fraction": {
+      "holes": 0.0,
+      "near_black": 0.0,
+      "painted": 0.0,
+      "incised": 0.1
+    },
+    "dark_spot_fraction": 0.00023217352585713376
+  },
+  "smoothing": {
+    "vertices_unique": 124309,
+    "disp_mean": 0.0003180439612141655,
+    "disp_p95": 0.0007152575032382189,
+    "disp_max_before_clamp": 0.001963700579481698,
+    "clamp_mm_equiv": 0.0007447469480768263,
+    "clamped_fraction": 0.03978794777530187,
+    "protected_vertex_fraction": 0.11591276576917198,
+    "volume_change_pct": null
+  },
+  "outputs": {
+    "conserved": "out_restore/sword\\sword_rgba_trellis2_512_restored_conserved_bronze.glb",
+    "pristine": "out_restore/sword\\sword_rgba_trellis2_512_restored_pristine_bronze.glb"
+  },
+  "provenance": "ai_inferred - colour restoration hypothesis (rule-based v1); damage map = FR-UI-008 layer",
+  "elapsed_s": 39.972482681274414
+}

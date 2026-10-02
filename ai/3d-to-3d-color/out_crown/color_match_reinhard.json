@@ -1,0 +1,65 @@
+{
+  "photo": "C:/S15P21C201_Dev/ai/3d-to-3d-color/crown.jpg",
+  "model": "C:/S15P21C201_Dev/ai/3d-to-3d-color/crown.glb",
+  "method": "reinhard",
+  "strength": 1.0,
+  "erode_px": 6,
+  "bg_reject_dE": 12.0,
+  "photo_foreground_px": 862604,
+  "target_lab_mean_std": [
+    [
+      54.77870754733664,
+      17.225276760341742
+    ],
+    [
+      14.354771762634178,
+      7.127053463818487
+    ],
+    [
+      42.973752531590485,
+      13.591293182544286
+    ]
+  ],
+  "geometries": {
+    "geometry_0": {
+      "vertices": 197557,
+      "faces": 234423,
+      "texture_size": [
+        2048,
+        2048
+      ],
+      "source_lab_mean_std": [
+        [
+          68.83875898367532,
+          6.800433193330376
+        ],
+        [
+          -3.4581514374981213,
+          1.5286976315084315
+        ],
+        [
+          60.05725095112282,
+          6.500806679257111
+        ]
+      ],
+      "after_lab_mean_std": [
+        [
+          54.64226097946996,
+          17.0885809235368
+        ],
+        [
+          13.991080193141219,
+          6.540159257183331
+        ],
+        [
+          42.852287442853374,
+          13.43032507873112
+        ]
+      ],
+      "mean_colour_deltaE_before": 28.40477420393383,
+      "mean_colour_deltaE_after": 0.40699261834185846
+    }
+  },
+  "output_glb": "C:/S15P21C201_Dev/ai/3d-to-3d-color/out_crown\\crown_colormatched_reinhard.glb",
+  "elapsed_s": 16.899033308029175
+}

@@ -1,0 +1,26 @@
+{
+  "model": "C:/S15P21C201_Dev/ai/3d-to-3d-color/out/sample_2026-09-04T170957.096_colormatched_reinhard.glb",
+  "output_glb": "C:/S15P21C201_Dev/ai/3d-to-3d-color/out\\sample_2026-09-04T170957.096_colormatched_reinhard_normal.glb",
+  "geometry": "geometry_0",
+  "texture_size": [
+    2048,
+    2048
+  ],
+  "method": "height = bandpass luminance inside used-texel mask (normalised convolution): dark = low; padding filled by nearest texel; normal = gradient of height (glTF/OpenGL tangent space)",
+  "used_texel_fraction": 0.6923980712890625,
+  "sigma_small_px": 1.0,
+  "sigma_large_px": 16.0,
+  "height_norm_percentiles": [
+    0.5,
+    99.5
+  ],
+  "height_norm_range_L": [
+    -30.063985461037987,
+    19.162082783455915
+  ],
+  "slope_deg_at_p95": 25.0,
+  "gradient_p95": 0.08942811052988552,
+  "normal_strength_k": 5.214329760429923,
+  "provenance": "ai_inferred - relief is estimated from colour, not measured",
+  "elapsed_s": 12.087462663650513
+}

@@ -1,0 +1,124 @@
+{
+  "model": "C:/ai/poc_inputs/bon009435/bon009435-000-30000.obj",
+  "material": "gilt_bronze",
+  "preset": {
+    "group": "metal",
+    "target_ab": [
+      14.0,
+      54.0
+    ],
+    "pristine_L": 67.5,
+    "pbr": [
+      1.0,
+      0.55
+    ],
+    "w_b": 0.5,
+    "w_a": 0.3,
+    "secondary_ab": [
+      17.0,
+      52.0
+    ],
+    "plausible_de": 25.0
+  },
+  "mode": "conserved",
+  "geometry": "bon009435-000-30000",
+  "texture_size": [
+    8192,
+    8192
+  ],
+  "valid_texel_fraction": 0.44516435265541077,
+  "target_ab": [
+    6.668600594467299,
+    37.43149973736215
+  ],
+  "target_source": "blend ab 0.90*healthy + 0.10*preset, L 0.70/0.30",
+  "glaze_dominant_ab": null,
+  "thresholds": {
+    "healthy_quantile": 0.15,
+    "grow_dE": 6.0,
+    "min_healthy_frac": 0.03,
+    "damage_dE_full": 30.0,
+    "protect_dE": 25.0,
+    "near_black_L": 25.0,
+    "incised_atten": 0.3,
+    "clamp_frac": 0.0007,
+    "plausible_dE": 25.0,
+    "damage_report_d": 0.2
+  },
+  "healthy_vs_preset_dE_ab": 20.13119372358206,
+  "target_mode": "auto",
+  "protect_dark": "off",
+  "protect_dark_thr_fixed_L": null,
+  "chroma_strength": 0.85,
+  "chroma_var_keep": 0.1,
+  "pristine_skipped": null,
+  "normal_map": true,
+  "crack_geometry": null,
+  "uv_seams": null,
+  "pattern_mirror": null,
+  "wear_mask": null,
+  "crack_mask": null,
+  "crack_params": {
+    "dark_thr": 4.705882352941177,
+    "min_diag": 250,
+    "max_thickness": 12.0,
+    "fill_band": 3.0,
+    "groove_rings": 3
+  },
+  "tone": {
+    "strength": 0.3,
+    "target_L": 59.50153342201487,
+    "surface_mean_L_before": 38.27891246114282,
+    "gain": 0.9228699345666234,
+    "surface_mean_L_after": 44.64569874940443
+  },
+  "destain": {
+    "strength": 1.0,
+    "size_px": 1024,
+    "mean_lift_L_damage": 10.187718371920573
+  },
+  "metrics": {
+    "L_ssim_valid": 0.7989217182277665,
+    "healthy_dE_mean": 0.5638041459167161,
+    "damage_dE_ab_to_target_before": 14.629833345506572,
+    "damage_dE_ab_to_target_after": 1.052467702939665,
+    "healthy_fraction": 0.0906440059831681,
+    "damage_fraction": 0.639597035248219,
+    "protect_fraction": 0.19115148270058244,
+    "protect_parts_fraction": {
+      "holes": 0.19115148270058244,
+      "near_black": 0.0,
+      "painted": 0.0,
+      "inlay": 0.0,
+      "wear": 0.0,
+      "incised": 0.10000002008403562
+    },
+    "dark_spot_fraction": 0.00010975925467340445,
+    "dark_protect_threshold_L": 15.7,
+    "alpha_sidecar_used": true,
+    "geom_detail": {
+      "strength": 1.0,
+      "raster": 2048,
+      "support_mean_damage": 0.6951557993888855,
+      "support_mean_healthy": 0.6565122008323669
+    },
+    "band_match": null,
+    "passthrough": {
+      "strength": 1.0,
+      "mode": "healthy_mask",
+      "healthy_fraction_of_valid": 0.09058780415681963,
+      "mean_pullback_dE_ab": 1.8950114342626476e-08
+    },
+    "cracks": {
+      "enabled": false,
+      "components": 0,
+      "fill_fraction": 0.0
+    }
+  },
+  "smoothing": null,
+  "outputs": {
+    "conserved": "out_restore/poc_bon009435\\bon009435-000-30000_restored_conserved_gilt_bronze.glb"
+  },
+  "provenance": "ai_inferred - colour restoration hypothesis (rule-based v1); damage map = FR-UI-008 layer",
+  "elapsed_s": 294.29664278030396
+}

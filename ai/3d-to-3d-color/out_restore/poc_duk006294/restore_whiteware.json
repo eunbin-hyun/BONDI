@@ -1,0 +1,149 @@
+{
+  "model": "C:/ai/poc_inputs/duk006294/duk006294-000-30000.obj",
+  "material": "whiteware",
+  "preset": {
+    "group": "ceramic",
+    "target_ab": [
+      -2.0,
+      6.0
+    ],
+    "pristine_L": 80.0,
+    "pbr": [
+      0.0,
+      0.12
+    ],
+    "w_c": 0.05
+  },
+  "mode": "conserved",
+  "geometry": "duk006294-000-30000",
+  "texture_size": [
+    8192,
+    8192
+  ],
+  "valid_texel_fraction": 0.6891927123069763,
+  "target_ab": [
+    -4.521011150209686,
+    10.96292349922447
+  ],
+  "target_source": "blend ab 0.90*healthy + 0.10*preset, L 0.70/0.30",
+  "glaze_dominant_ab": [
+    -0.27913805657927543,
+    0.5310213742909148
+  ],
+  "thresholds": {
+    "healthy_quantile": 0.15,
+    "grow_dE": 6.0,
+    "min_healthy_frac": 0.03,
+    "damage_dE_full": 30.0,
+    "protect_dE": 25.0,
+    "near_black_L": 25.0,
+    "incised_atten": 0.3,
+    "clamp_frac": 0.0007,
+    "plausible_dE": 15.0,
+    "damage_report_d": 0.2
+  },
+  "healthy_vs_preset_dE_ab": 6.185018426535824,
+  "target_mode": "auto",
+  "protect_dark": "all",
+  "protect_dark_thr_fixed_L": 58.8,
+  "chroma_strength": 0.85,
+  "chroma_var_keep": 0.15,
+  "pristine_skipped": null,
+  "normal_map": true,
+  "crack_geometry": null,
+  "uv_seams": null,
+  "pattern_mirror": null,
+  "wear_mask": null,
+  "crack_mask": null,
+  "crack_params": {
+    "dark_thr": 4.705882352941177,
+    "min_diag": 250,
+    "max_thickness": 12.0,
+    "fill_band": 3.0,
+    "groove_rings": 3
+  },
+  "tone": {
+    "strength": 0.8,
+    "target_L": 85.76852248908662,
+    "surface_mean_L_before": 84.04042478876174,
+    "gain": 0.8668777047561327,
+    "surface_mean_L_after": 85.42290294902165
+  },
+  "destain": {
+    "strength": 0.7,
+    "size_px": 512,
+    "mean_lift_L_damage": 0.8529407675276734
+  },
+  "metrics": {
+    "L_ssim_valid": 0.9861730831973193,
+    "healthy_dE_mean": 0.023391742578998693,
+    "damage_dE_ab_to_target_before": 8.763679682211075,
+    "damage_dE_ab_to_target_after": 1.0477244279913018,
+    "healthy_fraction": 0.12357859105133863,
+    "damage_fraction": 0.19464356832531404,
+    "protect_fraction": 0.6192105068567255,
+    "protect_parts_fraction": {
+      "holes": 0.0,
+      "near_black": 0.5946140337904484,
+      "painted": 0.11218487667493893,
+      "inlay": 0.0,
+      "wear": 0.009001633264102308,
+      "incised": 0.1
+    },
+    "dark_spot_fraction": 7.491739627345952e-05,
+    "dark_protect_threshold_L": 58.8,
+    "alpha_sidecar_used": false,
+    "geom_detail": {
+      "strength": 1.0,
+      "raster": 2048,
+      "support_mean_damage": 0.4434814751148224,
+      "support_mean_healthy": 0.4030153453350067
+    },
+    "band_match": {
+      "reference": "healthy",
+      "bands": [
+        {
+          "sigma_px": 3.0,
+          "std_restored": 3.882,
+          "std_reference": 1.225,
+          "factor_L": 0.316
+        },
+        {
+          "sigma_px": 12.0,
+          "std_restored": 5.612,
+          "std_reference": 3.775,
+          "factor_L": 0.673
+        },
+        {
+          "sigma_px": 48.0,
+          "std_restored": 6.436,
+          "std_reference": 5.29,
+          "factor_L": 0.822
+        },
+        {
+          "sigma_px": 192.0,
+          "std_restored": 6.814,
+          "std_reference": 5.534,
+          "factor_L": 0.812
+        }
+      ]
+    },
+    "passthrough": {
+      "strength": 1.0,
+      "mode": "healthy_mask",
+      "healthy_fraction_of_valid": 0.12351973819342915,
+      "mean_pullback_dE_ab": 0.010880377008012074
+    },
+    "cracks": {
+      "enabled": false,
+      "components": 0,
+      "fill_fraction": 0.0
+    }
+  },
+  "smoothing": null,
+  "outputs": {
+    "conserved": "out_restore/poc_duk006294\\duk006294-000-30000_restored_conserved_whiteware.glb"
+  },
+  "provenance": "ai_inferred - colour restoration hypothesis (rule-based v1); damage map = FR-UI-008 layer",
+  "elapsed_s": 319.9120976924896
+}

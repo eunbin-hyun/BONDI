@@ -1,0 +1,81 @@
+{
+  "model": "out_crown/crown_colormatched_hue.glb",
+  "material": "gilt_bronze",
+  "preset": {
+    "group": "metal",
+    "target_ab": [
+      14.0,
+      54.0
+    ],
+    "pristine_L": 67.5,
+    "pbr": [
+      1.0,
+      0.35
+    ],
+    "w_b": 0.5,
+    "w_a": 0.3,
+    "secondary_ab": [
+      17.0,
+      52.0
+    ]
+  },
+  "mode": "both",
+  "geometry": "geometry_0",
+  "texture_size": [
+    2048,
+    2048
+  ],
+  "valid_texel_fraction": 0.8339927196502686,
+  "target_ab": [
+    14.0,
+    54.0
+  ],
+  "target_source": "preset gilt_bronze (healthy fraction 2.8% < 3%)",
+  "glaze_dominant_ab": null,
+  "thresholds": {
+    "healthy_quantile": 0.15,
+    "grow_dE": 6.0,
+    "min_healthy_frac": 0.03,
+    "damage_dE_full": 30.0,
+    "protect_dE": 25.0,
+    "near_black_L": 25.0,
+    "incised_atten": 0.3,
+    "clamp_frac": 0.0007,
+    "plausible_dE": 15.0,
+    "damage_report_d": 0.2
+  },
+  "healthy_vs_preset_dE_ab": 3.4106378543324745,
+  "target_mode": "auto",
+  "metrics": {
+    "L_ssim_valid": 0.9992953205573635,
+    "healthy_dE_mean": 0.0,
+    "damage_dE_ab_to_target_before": 12.177089363392671,
+    "damage_dE_ab_to_target_after": 8.115818312308495,
+    "healthy_fraction": 0.028405220211782725,
+    "damage_fraction": 0.8143932322837584,
+    "protect_fraction": 0.0,
+    "protect_parts_fraction": {
+      "holes": 0.0,
+      "near_black": 0.0,
+      "painted": 0.0,
+      "incised": 0.10000002858760916
+    },
+    "dark_spot_fraction": 0.00017066802667452634
+  },
+  "smoothing": {
+    "vertices_unique": 115491,
+    "disp_mean": 0.000597985552382487,
+    "disp_p95": 0.0014420556487253823,
+    "disp_max_before_clamp": 0.004251649477073637,
+    "clamp_mm_equiv": 0.0009326723332372953,
+    "clamped_fraction": 0.18876795594461906,
+    "protected_vertex_fraction": 0.15350979730022252,
+    "volume_change_pct": null
+  },
+  "outputs": {
+    "conserved": "out_restore/crown_gilt\\crown_colormatched_hue_restored_conserved_gilt_bronze.glb",
+    "pristine": "out_restore/crown_gilt\\crown_colormatched_hue_restored_pristine_gilt_bronze.glb"
+  },
+  "provenance": "ai_inferred - colour restoration hypothesis (rule-based v1); damage map = FR-UI-008 layer",
+  "elapsed_s": 40.96692371368408
+}

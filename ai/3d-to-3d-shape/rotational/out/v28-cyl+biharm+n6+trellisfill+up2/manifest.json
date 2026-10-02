@@ -1,0 +1,157 @@
+{
+  "method": "cyl+biharm+n6+trellisfill+up2 (shape: cylindrical map, material: TRELLIS texturing on filled only)",
+  "grid": [
+    96,
+    144
+  ],
+  "fill": {
+    "scheme": "biharmonic",
+    "solved_on": "profile residual r - rbar(y)",
+    "alpha": 0.0,
+    "clamp_sigma": 0.0,
+    "cell_statistic": "mean",
+    "obs_blur_cells": 5,
+    "mesh_upsample": 2,
+    "split_rim_normals": true
+  },
+  "axis_xz": [
+    -0.004134401369714236,
+    0.05051197467120062
+  ],
+  "thickness": 0.008,
+  "observed_cells_frac": 0.6448929398148148,
+  "regions": {
+    "fill": 5,
+    "openwork": 6,
+    "tiny": 97
+  },
+  "openwork_kept_open": [
+    {
+      "area": 139,
+      "width_deg": 42.5,
+      "h": [
+        8,
+        18
+      ],
+      "enclosed": true,
+      "theta_deg": 168.8
+    },
+    {
+      "area": 19,
+      "width_deg": 7.5,
+      "h": [
+        9,
+        18
+      ],
+      "enclosed": true,
+      "theta_deg": 1.4
+    },
+    {
+      "area": 58,
+      "width_deg": 32.5,
+      "h": [
+        9,
+        15
+      ],
+      "enclosed": true,
+      "theta_deg": 239.6
+    },
+    {
+      "area": 88,
+      "width_deg": 25.0,
+      "h": [
+        9,
+        17
+      ],
+      "enclosed": true,
+      "theta_deg": 346.5
+    },
+    {
+      "area": 136,
+      "width_deg": 42.5,
+      "h": [
+        27,
+        38
+      ],
+      "enclosed": true,
+      "theta_deg": 18.2
+    },
+    {
+      "area": 72,
+      "width_deg": 25.0,
+      "h": [
+        28,
+        36
+      ],
+      "enclosed": true,
+      "theta_deg": 153.9
+    }
+  ],
+  "openwork_nfold_carved": [
+    {
+      "tier_h": [
+        8,
+        18
+      ],
+      "n": 6,
+      "share": 10.3,
+      "theta_deg": 50.4,
+      "cells": 81,
+      "nearest_known_deg": 49.0
+    },
+    {
+      "tier_h": [
+        8,
+        18
+      ],
+      "n": 6,
+      "share": 10.3,
+      "theta_deg": 110.4,
+      "cells": 93,
+      "nearest_known_deg": 58.4
+    },
+    {
+      "tier_h": [
+        27,
+        38
+      ],
+      "n": 6,
+      "share": 6.7,
+      "theta_deg": 86.1,
+      "cells": 85,
+      "nearest_known_deg": 67.8
+    },
+    {
+      "tier_h": [
+        27,
+        38
+      ],
+      "n": 6,
+      "share": 6.7,
+      "theta_deg": 266.1,
+      "cells": 124,
+      "nearest_known_deg": 112.1
+    }
+  ],
+  "snap_mm": 10.0,
+  "carried": {
+    "vertices": 94877,
+    "faces": 149150,
+    "modified": 0
+  },
+  "filled": {
+    "vertices": 33864,
+    "faces": 62188,
+    "components": 5
+  },
+  "provenance": {
+    "region_carried": "observed (TRELLIS A단계, 무수정)",
+    "region_carried_color": "observed (TRELLIS A단계 PBR, 무수정)",
+    "region_filled": "회전대칭 가정 + n-fold 투창 가정 (ai_inferred)",
+    "region_filled_color": "TRELLIS.2 텍스처링 (Trellis2TexturingPipeline 조립, AI 추정)"
+  },
+  "material_source": {
+    "carried": "out/v24-cyl+biharm+n6+nn+up2",
+    "filled": "out/v27-cyl+biharm+n6+trellistex+up2"
+  }
+}

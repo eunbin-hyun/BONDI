@@ -1,0 +1,178 @@
+{
+  "model": "C:/ai/poc_inputs/ssu022891/ssu022891-001-30000.obj",
+  "material": "earthenware",
+  "preset": {
+    "group": "ceramic",
+    "target_ab": [
+      13.0,
+      30.0
+    ],
+    "pristine_L": 50.0,
+    "pbr": [
+      0.0,
+      0.75
+    ],
+    "w_c": 0.05
+  },
+  "mode": "conserved",
+  "geometry": "ssu022891-001-30000",
+  "texture_size": [
+    8192,
+    8192
+  ],
+  "valid_texel_fraction": 0.6127236038446426,
+  "target_ab": [
+    8.2032245483803,
+    22.992156160904575
+  ],
+  "target_source": "blend ab 0.90*healthy + 0.10*preset, L 0.70/0.30",
+  "glaze_dominant_ab": [
+    6.495330182149338,
+    16.870392401526882
+  ],
+  "thresholds": {
+    "healthy_quantile": 0.15,
+    "grow_dE": 6.0,
+    "min_healthy_frac": 0.03,
+    "damage_dE_full": 30.0,
+    "protect_dE": 25.0,
+    "near_black_L": 25.0,
+    "incised_atten": 0.3,
+    "clamp_frac": 0.0007,
+    "plausible_dE": 15.0,
+    "damage_report_d": 0.2
+  },
+  "healthy_vs_preset_dE_ab": 9.435873889433623,
+  "target_mode": "auto",
+  "protect_dark": "off",
+  "protect_dark_thr_fixed_L": null,
+  "chroma_strength": 0.85,
+  "chroma_var_keep": 0.15,
+  "pristine_skipped": null,
+  "normal_map": true,
+  "crack_geometry": {
+    "method": "biharmonic",
+    "rings": 3,
+    "vertices_unique": 190712,
+    "free_vertex_fraction": 0.23401254247241915,
+    "seed_vertex_fraction": 0.052041822224086584,
+    "disp_mean_free": 0.8909688662155506,
+    "disp_p95_free": 2.096883896541222,
+    "disp_max_before_clamp": 6.50641901040125,
+    "clamp_mm_equiv": 10.723713484949897,
+    "clamped_fraction": 0.0,
+    "crack_vertex_fraction": 0.07642595380381065,
+    "reemboss": {
+      "strength": 1.0,
+      "cap_mm": 0.6,
+      "mean_abs_mm": 0.04247827082872391
+    }
+  },
+  "uv_seams": {
+    "mean_abs_dL_across_seams": 0.6856707253929865,
+    "border_band": {
+      "band_px": 24,
+      "band_fraction_of_valid": 0.07985773550716047,
+      "mean_dL_in_band": 0.7534862179743602
+    }
+  },
+  "pattern_mirror": {
+    "band_mm": 3.0,
+    "core_fraction_of_valid": 0.059661712653108274,
+    "band_fraction_of_valid": 0.16159233214374263,
+    "mirror_source_found": 0.9826316558925773
+  },
+  "wear_mask": null,
+  "crack_mask": null,
+  "crack_params": {
+    "dark_thr": 2.35,
+    "min_diag": 180.0,
+    "max_thickness": 26.0,
+    "fill_band": 3.0,
+    "groove_rings": 3
+  },
+  "tone": {
+    "strength": 0.8,
+    "target_L": 41.873540852505435,
+    "surface_mean_L_before": 31.26869333025844,
+    "gain": 0.9883575784865395,
+    "surface_mean_L_after": 39.752571348056044
+  },
+  "destain": {
+    "strength": 0.7,
+    "size_px": 512,
+    "mean_lift_L_damage": 1.5262407595321594
+  },
+  "metrics": {
+    "L_ssim_valid": 0.9309783820184334,
+    "healthy_dE_mean": 0.8848674244386235,
+    "damage_dE_ab_to_target_before": 6.476481953900593,
+    "damage_dE_ab_to_target_after": 1.1410595286261977,
+    "healthy_fraction": 0.0492269484426795,
+    "damage_fraction": 0.3725819954845895,
+    "protect_fraction": 0.0,
+    "protect_parts_fraction": {
+      "holes": 0.0,
+      "near_black": 0.0,
+      "painted": 0.0,
+      "inlay": 0.0,
+      "wear": 0.0,
+      "incised": 0.10000001215977408
+    },
+    "dark_spot_fraction": 7.612018574784496e-06,
+    "dark_protect_threshold_L": 21.105798211725087,
+    "alpha_sidecar_used": false,
+    "geom_detail": {
+      "strength": 1.0,
+      "raster": 2048,
+      "support_mean_damage": 0.5334491729736328,
+      "support_mean_healthy": 0.5774004459381104
+    },
+    "band_match": {
+      "reference": "healthy",
+      "bands": [
+        {
+          "sigma_px": 3.0,
+          "std_restored": 1.377,
+          "std_reference": 1.599,
+          "factor_L": 1.0
+        },
+        {
+          "sigma_px": 12.0,
+          "std_restored": 1.323,
+          "std_reference": 1.691,
+          "factor_L": 1.0
+        },
+        {
+          "sigma_px": 48.0,
+          "std_restored": 1.019,
+          "std_reference": 1.04,
+          "factor_L": 1.0
+        },
+        {
+          "sigma_px": 192.0,
+          "std_restored": 0.973,
+          "std_reference": 1.456,
+          "factor_L": 1.0
+        }
+      ]
+    },
+    "passthrough": {
+      "strength": 1.0,
+      "mode": "healthy_mask",
+      "healthy_fraction_of_valid": 0.0492269484426795,
+      "mean_pullback_dE_ab": 4.808135048233079e-07
+    },
+    "cracks": {
+      "enabled": true,
+      "components": 93,
+      "fill_fraction": 0.02001600955855521
+    }
+  },
+  "smoothing": null,
+  "outputs": {
+    "conserved": "out_restore/poc_ssu022891\\ssu022891-001-30000_restored_conserved_earthenware.glb"
+  },
+  "provenance": "ai_inferred - colour restoration hypothesis (rule-based v1); damage map = FR-UI-008 layer",
+  "elapsed_s": 654.0315780639648
+}

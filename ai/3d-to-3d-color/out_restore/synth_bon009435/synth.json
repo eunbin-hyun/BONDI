@@ -1,0 +1,27 @@
+{
+ "key": "bon009435",
+ "material": "gilt_bronze",
+ "cover": 0.45,
+ "severity": 8.0,
+ "seed": 0,
+ "source_texture": "C:\\ai\\poc_inputs\\bon009435\\bon009435-000-30000.jpg",
+ "input_written": "C:\\ai\\poc_synth\\bon009435",
+ "patina_ab_from_real_damage": [
+  8.03493134024436,
+  23.78335936021334
+ ],
+ "dL_from_real_damage": 20.217090718290017,
+ "healthy_fraction_of_valid": 0.09058780415681963,
+ "truth_fraction_of_valid": 0.03971986251540362,
+ "healthy_left_fraction_of_valid": 0.05086794164141601,
+ "applied": {
+  "mean_dL": 16.159204202153408,
+  "mean_dE_ab": 9.666151180059204,
+  "L_std_before": 7.051038021059205,
+  "L_std_after": 9.341572761535645
+ },
+ "real_damage_reference": {
+  "mean_L_healthy": 56.07361917430696,
+  "mean_L_damage": 35.856528456016946
+ }
+}

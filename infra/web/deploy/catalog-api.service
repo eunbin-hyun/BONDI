@@ -1,0 +1,20 @@
+[Unit]
+Description=C201 asset catalog API (FastAPI, 127.0.0.1:8412)
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/srv/catalog
+Environment=CATALOG_ROOT=/srv/catalog
+Environment=CATALOG_DB=/srv/catalog/catalog.db
+Environment=CATALOG_FILES=/srv/catalog/files
+Environment=CATALOG_PREVIEW=/srv/catalog/preview
+Environment=CATALOG_ZIPS=/srv/catalog/zips
+Environment=CATALOG_JOBS=/srv/catalog/jobs
+# 기본 포트(8000·8080 등)를 피하라는 SSAFY 지침에 따라 8412. 외부 노출 없음(127.0.0.1) — 앞단은 nginx 80.
+ExecStart=/home/ubuntu/.local/bin/uv run --project /srv/catalog uvicorn app.main:app --host 127.0.0.1 --port 8412 --workers 2
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

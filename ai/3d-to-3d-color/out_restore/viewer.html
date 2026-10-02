@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>제작 당시 색 복원 — PoC 유물 전후 비교</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #cfcfcf; font-family: system-ui, sans-serif; overflow: hidden; }
+  #ui { position: fixed; top: 8px; left: 8px; background: rgba(255,255,255,.95); padding: 8px 10px; border-radius: 6px;
+        font-size: 13px; box-shadow: 0 1px 4px #0004; line-height: 1.7; max-width: 420px; z-index: 2; }
+  #ui select, #ui label { margin-right: 8px; }
+  #status { color: #555; white-space: pre-line; }
+  .cap { position: fixed; top: 8px; font-size: 14px; font-weight: 600; color: #222; background: rgba(255,255,255,.8);
+         padding: 2px 8px; border-radius: 4px; z-index: 1; }
+  #capL { left: 50%; transform: translateX(-100%); margin-left: -12px; }
+  #capR { left: 50%; margin-left: 12px; }
+  #divider { position: fixed; top: 0; bottom: 0; left: 50%; width: 2px; background: #fff8; z-index: 1; }
+  canvas { display: block; }
+</style>
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+               "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/" } }
+</script>
+</head>
+<body>
+<div id="ui">
+  <div>유물: <select id="item"></select></div>
+  <div>복원 버전: <select id="variant"></select></div>
+  <div>
+    표시: <label><input type="radio" name="shade" id="shade_unlit" checked> 텍스처 원색 (조명·재질 없음)</label>
+    <label><input type="radio" name="shade" id="shade_lit"> 조명·재질 반영</label>
+    <label><input type="checkbox" id="spin" checked> 자동 회전</label>
+    <button id="front">정면</button> <button id="back">뒷면</button> <button id="side">측면</button>
+  </div>
+  <div>
+    보기: <select id="layout">
+      <option value="split" selected>좌 원본 · 우 복원 (카메라 동기)</option>
+      <option value="orig">원본만</option>
+      <option value="rest">복원만</option>
+    </select>
+    <span style="color:#666">스페이스 = 원본/복원 전환</span>
+  </div>
+  <div id="pbrrow" hidden>재질 덮어쓰기: roughness <input type="range" id="rough" min="0" max="1" step="0.05" value="0.5" style="width:90px;vertical-align:middle"> <span id="roughv">파일값</span>
+    · metallic <input type="range" id="metal" min="0" max="1" step="0.05" value="1" style="width:90px;vertical-align:middle"> <span id="metalv">파일값</span>
+    <button id="pbrreset">파일값으로</button><br>
+    <label><input type="checkbox" id="nrm" checked> 노멀맵(무늬 요철)</label> 세기 <input type="range" id="nscale" min="0" max="3" step="0.1" value="1" style="width:90px;vertical-align:middle"> <span id="nval">1.0</span> <span id="nnote" style="color:#a60"></span>
+    &nbsp; 밝기 <input type="range" id="expo" min="0.3" max="3" step="0.05" value="1" style="width:110px;vertical-align:middle"> <span id="eval">1.00</span></div>
+  <div id="paintrow">마스크 붓:
+    <label><input type="checkbox" id="paintOn"> 칠하기</label>
+    <label><input type="checkbox" id="erase"> 지우개</label>
+    붓 <input type="range" id="brush" min="4" max="120" step="2" value="24" style="width:90px;vertical-align:middle"> <span id="brushv">24 px</span>
+    <button id="undoStroke">되돌리기</button> <button id="clearMask">전체 지우기</button>
+    <button id="loadMask">불러오기</button> <button id="saveMask">저장</button> <button id="runMask">이 마스크로 복원</button>
+    <span id="paintNote" style="color:#a60"></span></div>
+  <div>배경: <input type="color" id="bgcol" value="#cfcfcf"></div>
+  <div id="status">불러오는 중…</div>
+  <div style="color:#666">마우스 드래그 회전 · 휠 확대 · 우클릭 이동. 붓은 오른쪽(복원) 화면에만 칠해지고, 저장하면 유물 텍스처 좌표의 PNG가 된다. 메시는 동일, 텍스처만 다름(뷰어용 2K 축소본). [이상화 회전체]만 새 메시</div>
+</div>
+<div class="cap" id="capL">원본 (현재 상태)</div>
+<div class="cap" id="capR">복원 (제작 당시 색, conserved)</div>
+<div id="divider"></div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const NAMES = {
+  jan_v0: '굽다리잔 慶州新收71209 (stoneware 회청색, 2K 스캔)',
+  bari_v0: '굽다리바리 慶州古蹟13472 (stoneware, 2K 스캔)',
+  gubdari_v2: '굽다리접시 慶州新收71489 v2 (stoneware, 4K 스캔)', gubdari_v0: '굽다리접시 慶州新收71489 v0 (stoneware, 2K 스캔)',
+  bon009435: '금동 투각 관모 bon009435 (gilt_bronze)', duk006294: '철화백자 duk006294 (whiteware)',
+  bon002789: '금동 bon002789 (gilt_bronze)', bon004740: '금 bon004740 (gold)',
+  lkh000002: '청동 lkh000002 (bronze)', duk003312: '금동 duk003312 (gilt_bronze)',
+  don000498_001: '청자 don000498 ① (celadon)', don000498_002: '청자 don000498 ② (celadon)',
+  gae000001_001: '청자 gae000001 ① (celadon, blend 0.35)', gae000001_002: '청자 gae000001 ② (celadon, blend 0.35)',
+  ssu022891: '빗살무늬토기 ssu022891 (earthenware, 균열 제거)',
+};
+const manifest = await (await fetch('viewer/manifest.json', { cache: 'no-store' })).json();
+const sel = document.getElementById('item');
+for (const k of Object.keys(NAMES)) if (manifest[k]) { const o = document.createElement('option'); o.value = k; o.textContent = NAMES[k]; sel.appendChild(o); }
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.NoToneMapping;   // exposure below only bites once a tone mapper is active
+renderer.toneMappingExposure = 1.0;
+renderer.setScissorTest(true);
+document.body.appendChild(renderer.domElement);
+
+const bg = new THREE.Color(0xcfcfcf);
+const pmrem = new THREE.PMREMGenerator(renderer);
+const env = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+const LIGHT0 = { hemi: 0.35, key: 0.7 };
+function makeScene() {
+  const s = new THREE.Scene(); s.background = bg; s.environment = env;
+  s.add(new THREE.HemisphereLight(0xffffff, 0x999999, LIGHT0.hemi));
+  const key = new THREE.DirectionalLight(0xffffff, LIGHT0.key); key.position.set(2, 3, 2); s.add(key);
+  s.environmentIntensity = 1.0;
+  return s;
+}
+// One brightness control for both panes. Unlit mode ("텍스처 원색") ignores lights, so there the exposure is applied
+// through the tone mapper instead; lit mode scales the lights and the environment so the material response stays right.
+let EXPO = 1.0;
+function applyExposure(v) {
+  // Apply the factor ONCE. The first version scaled the lights AND set toneMappingExposure, so the slider actually
+  // delivered v squared (0.5 looked like 0.25) and every brightness baked from a slider reading was wrong.
+  // toneMappingExposure multiplies the final pixel, which is what we want and works in the unlit mode too.
+  EXPO = v;
+  renderer.toneMapping = v === 1 ? THREE.NoToneMapping : THREE.LinearToneMapping;
+  renderer.toneMappingExposure = v;
+}
+const sceneA = makeScene(), sceneB = makeScene();
+const camera = new THREE.PerspectiveCamera(40, 1, 0.01, 100);
+camera.position.set(0, 0.15, 2.4);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.autoRotate = true; controls.autoRotateSpeed = 1.2;
+
+const loader = new GLTFLoader();
+const cache = {};
+let cur = { a: null, b: null };
+let unlit = true, layout = 'split';
+
+function fit(obj) {
+  let box = new THREE.Box3().setFromObject(obj);
+  let ext = box.getSize(new THREE.Vector3());
+  if (ext.z > ext.y * 1.15) {             // Z-up scan (e.g. the seated statue): stand it upright
+    obj.rotation.x = -Math.PI / 2;
+    obj.updateMatrixWorld(true);
+    box = new THREE.Box3().setFromObject(obj);
+  }
+  const size = box.getSize(new THREE.Vector3()).length();
+  const c = box.getCenter(new THREE.Vector3());
+  obj.position.sub(c); obj.scale.setScalar(1.6 / size); obj.position.multiplyScalar(1.6 / size);
+}
+let pbrOverride = null;   // {roughness, metalness} or null = values from the file
+let normalOn = true, normalScale = 1.0;
+function applyNormal(root) {
+  let has = false;
+  root.traverse(o => {
+    if (!o.isMesh || o.userData.isOverlay) return;
+    const m = o.userData.lit || o.material;
+    if (o.userData.nmap === undefined) o.userData.nmap = m.normalMap || null;
+    if (o.userData.nmap) { has = true; m.normalMap = normalOn ? o.userData.nmap : null; m.normalScale.set(normalScale, normalScale); m.needsUpdate = true; }
+  });
+  return has;
+}
+function applyUnlit(root, on) {
+  root.traverse(o => {
+    if (!o.isMesh || o.userData.isOverlay) return;
+    if (!o.userData.lit) { o.userData.lit = o.material; o.userData.filePbr = { r: o.material.roughness, m: o.material.metalness }; }
+    if (on) {
+      if (!o.userData.unlit) o.userData.unlit = new THREE.MeshBasicMaterial({ map: o.userData.lit.map, side: THREE.DoubleSide });
+      o.material = o.userData.unlit;
+    } else {
+      o.material = o.userData.lit; o.material.side = THREE.DoubleSide;
+      const f = o.userData.filePbr;
+      o.material.roughness = pbrOverride ? pbrOverride.roughness : f.r;
+      o.material.metalness = pbrOverride ? pbrOverride.metalness : f.m;
+      o.material.needsUpdate = true;
+    }
+  });
+  if (!on) { const has = applyNormal(root); if (root === cur.b) document.getElementById('nnote').textContent = has ? '' : '(이 버전엔 노멀맵 없음)'; }
+}
+function filePbrText() {
+  const t = [];
+  [cur.a, cur.b].forEach((r, i) => { if (!r) return; let done = false; r.traverse(o => { if (!done && o.isMesh && o.userData.filePbr) { t.push(`${i ? '복원' : '원본'} r${o.userData.filePbr.r.toFixed(2)} m${o.userData.filePbr.m.toFixed(2)}`); done = true; } }); });
+  return t.join(' · ');
+}
+function load(url, status) {
+  if (cache[url]) return Promise.resolve(cache[url]);
+  return new Promise((res, rej) => loader.load(url, g => { fit(g.scene); cache[url] = g.scene; res(g.scene); },
+    xhr => { if (xhr.total) status.textContent = `${url.split('/').pop()} ${Math.round(100 * xhr.loaded / xhr.total)} %`; }, rej));
+}
+const vsel = document.getElementById('variant');
+function fillVariants(k) {
+  vsel.innerHTML = '';
+  for (const [i, v] of manifest[k].variants.entries()) {
+    const o = document.createElement('option'); o.value = i;
+    const age = v.external ? '' : v.current ? '[현재] ' : `[실험 ${v.exp_tag || ''} ${v.run_date || ''}] `;
+    o.textContent = v.external ? `[8/27 PoC] ${v.mode}` : v.method === 'idealized_revolution' ? `[이상화 회전체] 매끈한 새 메시 + 빗살무늬 전사` : `${age}${v.mode} · 암부 보호 ${v.protect_dark ?? '-'} · 톤 ${v.tone ?? 0} · 채도 ${v.chroma ?? 'd'} · 탈색 ${v.destain ?? 0}${(v.masks && v.masks.length) ? ` · ${v.mask_src || 'SAM'} 마스크(` + v.masks.join(',') + ')' : ''}${v.band_match ? ' · 대역 상한(건전부 기준)' : ''}${v.destain_keep ? ` · 탈색 무늬 보존 σ${v.destain_keep}` : ''}${v.destain_geom ? ` · 요철 기준 탈색 ${v.destain_geom}` : ''}${v.groove === 'biharmonic' ? ' · 홈 메우기' : ''}${v.mirror ? ` · 무늬 되살리기 v1.7(${v.mirror} mm` + (v.reemboss ? `, 재양각 ${v.reemboss.toFixed(2)} mm)` : ')') : ''}`;
+    vsel.appendChild(o);
+  }
+}
+async function show(k, vi = 0) {
+  const status = document.getElementById('status');
+  const v = manifest[k].variants[vi];
+  if (cur.a) sceneA.remove(cur.a); if (cur.b) sceneB.remove(cur.b);
+  try {
+    // ?v=<file mtime>: a rerun rewrites the GLB at the same path, and without this the browser keeps showing the old one.
+    [cur.a, cur.b] = await Promise.all([load(`viewer/${k}_original.glb?v=${manifest[k].stamp || 0}`, status),
+                                        load(`viewer/${v.file}?v=${v.stamp || 0}`, status)]);
+  } catch (e) { status.textContent = '로드 실패: ' + e; throw e; }
+  applyUnlit(cur.a, unlit); applyUnlit(cur.b, unlit);
+  sceneA.add(cur.a); sceneB.add(cur.b);
+  if (typeof attachOverlay === 'function' && paintOn) { attachOverlay(cur.b); setPaint(true); }
+  if (!pbrOverride) document.getElementById('roughv').textContent = '파일값 ' + filePbrText();
+  const m = manifest[k];
+  document.getElementById('capR').textContent = `복원 (제작 당시 색, ${v.mode})`;
+  status.textContent = v.method === 'idealized_revolution' ? `스캔 메시를 쓰지 않음: 축·반지름 프로필로 새로 만든 회전체(둥근 바닥·벽 두께·둥근 구연부) + 스캔 색·요철 전사. 접합선·균열·결손은 이웃 결을 거울 복사한 추정` : v.external ? `삼각형 ${m.faces.toLocaleString()} · ${v.target_source}` : `삼각형 ${m.faces.toLocaleString()} · 목표색: ${v.target_source}\n손상부 ΔE(목표까지) ${v.damage_dE_before?.toFixed(1)} → ${v.damage_dE_after?.toFixed(1)} · 보호 ${(v.protect_fraction * 100).toFixed(1)} % · L-SSIM ${v.L_ssim?.toFixed(3)}`;
+}
+
+sel.addEventListener('change', e => { fillVariants(e.target.value); show(e.target.value, 0); });
+vsel.addEventListener('change', e => show(sel.value, parseInt(e.target.value)));
+function setShade(u) {
+  unlit = u; document.getElementById('pbrrow').hidden = u;
+  if (cur.a) { applyUnlit(cur.a, unlit); applyUnlit(cur.b, unlit); }
+  if (!pbrOverride) { document.getElementById('roughv').textContent = '파일값 ' + filePbrText(); document.getElementById('metalv').textContent = ''; }
+}
+document.getElementById('shade_unlit').addEventListener('change', () => setShade(true));
+document.getElementById('shade_lit').addEventListener('change', () => setShade(false));
+function setPbr() {
+  pbrOverride = { roughness: parseFloat(document.getElementById('rough').value), metalness: parseFloat(document.getElementById('metal').value) };
+  document.getElementById('roughv').textContent = pbrOverride.roughness.toFixed(2); document.getElementById('metalv').textContent = pbrOverride.metalness.toFixed(2);
+  if (cur.a && !unlit) { applyUnlit(cur.a, false); applyUnlit(cur.b, false); }
+}
+document.getElementById('nrm').addEventListener('change', e => { normalOn = e.target.checked; if (cur.b) { applyNormal(cur.a); applyNormal(cur.b); } });
+document.getElementById('expo').addEventListener('input', e => {
+  const v = parseFloat(e.target.value);
+  document.getElementById('eval').textContent = v.toFixed(2);
+  applyExposure(v);
+});
+document.getElementById('nscale').addEventListener('input', e => { normalScale = parseFloat(e.target.value); document.getElementById('nval').textContent = normalScale.toFixed(1); if (cur.b) { applyNormal(cur.a); applyNormal(cur.b); } });
+document.getElementById('rough').addEventListener('input', setPbr);
+document.getElementById('metal').addEventListener('input', setPbr);
+document.getElementById('pbrreset').addEventListener('click', () => { pbrOverride = null; setShade(false); });
+document.getElementById('front').addEventListener('click', () => { camera.position.set(0, 0.15, 2.4); controls.target.set(0, 0, 0); controls.update(); });
+document.getElementById('back').addEventListener('click', () => { camera.position.set(0, 0.15, -2.4); controls.target.set(0, 0, 0); controls.update(); });
+document.getElementById('side').addEventListener('click', () => { camera.position.set(2.4, 0.15, 0); controls.target.set(0, 0, 0); controls.update(); });
+document.getElementById('spin').addEventListener('change', e => controls.autoRotate = e.target.checked);
+document.getElementById('bgcol').addEventListener('input', e => bg.set(e.target.value));
+function setLayout(v) {
+  layout = v; document.getElementById('layout').value = v;
+  const split = v === 'split';
+  document.getElementById('divider').style.display = split ? '' : 'none';
+  document.getElementById('capL').style.display = (split || v === 'orig') ? '' : 'none';
+  document.getElementById('capR').style.display = (split || v === 'rest') ? '' : 'none';
+  if (!split) { document.getElementById('capL').style = 'left:50%;transform:translateX(-50%)'; document.getElementById('capR').style = 'left:50%;transform:translateX(-50%)'; }
+  else { document.getElementById('capL').style = ''; document.getElementById('capR').style = ''; }
+}
+document.getElementById('layout').addEventListener('change', e => setLayout(e.target.value));
+window.addEventListener('keydown', e => { if (e.code === 'Space' && e.target.tagName !== 'SELECT') { e.preventDefault(); setLayout(layout === 'rest' ? 'orig' : 'rest'); } });
+window.addEventListener('resize', () => renderer.setSize(window.innerWidth, window.innerHeight));
+
+// ---------------------------------------------------------------- mask brush (v1.7 aid): paint a crack / seam mask
+// straight onto the model. The stroke is written in TEXTURE space (the hit point's UV), so the PNG lines up with the
+// artefact's own atlas and can be handed to restore_original_colour.py --crack-mask. Rules that made it usable:
+// left drag paints and right drag still rotates; the overlay is a second material on the same geometry (no texture
+// rebuild per stroke); strokes are kept as a list and redrawn, so undo does not need a 4096 x 4096 snapshot.
+const MASKSZ = 4096;
+const maskCanvas = document.createElement('canvas');
+maskCanvas.width = maskCanvas.height = MASKSZ;
+const mctx = maskCanvas.getContext('2d', { willReadFrequently: true });
+const maskTex = new THREE.CanvasTexture(maskCanvas);
+maskTex.colorSpace = THREE.SRGBColorSpace;
+const overlayMat = new THREE.MeshBasicMaterial({ map: maskTex, transparent: true, depthWrite: false, side: THREE.DoubleSide,
+                                                 polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
+let strokes = [], baseMask = null, painting = false, paintOn = false, curStroke = null, maskDirty = false;
+const ray = new THREE.Raycaster();
+const note = document.getElementById('paintNote');
+
+function redrawMask() {
+  mctx.clearRect(0, 0, MASKSZ, MASKSZ);
+  if (baseMask) mctx.drawImage(baseMask, 0, 0, MASKSZ, MASKSZ);
+  for (const st of strokes) {
+    mctx.globalCompositeOperation = st.erase ? 'destination-out' : 'source-over';
+    mctx.strokeStyle = 'rgba(255,32,32,0.85)'; mctx.fillStyle = 'rgba(255,32,32,0.85)';
+    mctx.lineWidth = st.r; mctx.lineCap = 'round'; mctx.lineJoin = 'round';
+    mctx.beginPath();
+    mctx.moveTo(st.pts[0][0], st.pts[0][1]);
+    for (const q of st.pts.slice(1)) mctx.lineTo(q[0], q[1]);
+    if (st.pts.length === 1) { mctx.arc(st.pts[0][0], st.pts[0][1], st.r / 2, 0, 7); mctx.fill(); } else mctx.stroke();
+  }
+  mctx.globalCompositeOperation = 'source-over';
+  maskTex.needsUpdate = true;
+}
+function attachOverlay(root) {
+  if (!root) return;
+  root.traverse(o => {
+    if (!o.isMesh || o.userData.isOverlay || o.userData.hasOverlay) return;
+    const om = new THREE.Mesh(o.geometry, overlayMat);
+    om.userData.isOverlay = true; om.visible = paintOn;
+    o.userData.hasOverlay = om; o.add(om);
+  });
+}
+function overlayVisible(v) { if (cur.b) cur.b.traverse(o => { if (o.userData.isOverlay) o.visible = v; }); }
+function paintableVariant() {
+  const v = manifest[sel.value].variants[parseInt(vsel.value || 0)];
+  return !(v.external || v.method === 'idealized_revolution');       // those two have their own UV layout
+}
+function pickUV(ev) {
+  const W = window.innerWidth, H = window.innerHeight;
+  let x = ev.clientX, y = ev.clientY, w = W;
+  if (layout === 'split') { if (x < W / 2) return null; x -= W / 2; w = W / 2; }
+  else if (layout === 'orig') return null;                            // paint on the restored model only
+  ray.setFromCamera(new THREE.Vector2((x / w) * 2 - 1, -(y / H) * 2 + 1), camera);
+  const hit = ray.intersectObject(cur.b, true).find(h => h.uv && !h.object.userData.isOverlay);
+  return hit ? hit.uv : null;
+}
+function paintAt(ev, start) {
+  const uv = pickUV(ev);
+  if (!uv) return;
+  const pt = [uv.x * MASKSZ, (1 - uv.y) * MASKSZ];
+  const r = parseFloat(document.getElementById('brush').value);
+  const jump = curStroke && Math.hypot(pt[0] - curStroke.pts.at(-1)[0], pt[1] - curStroke.pts.at(-1)[1]) > Math.max(4 * r, 48);
+  if (start || !curStroke || jump) {                                  // a drag across a fragment edge lands in a far part of
+    curStroke = { pts: [pt], r, erase: document.getElementById('erase').checked };   // the atlas: start a new sub-stroke, do
+    strokes.push(curStroke);                                          // not draw the straight line between the two charts
+  } else curStroke.pts.push(pt);
+  maskDirty = true;
+  redrawMask();
+}
+renderer.domElement.addEventListener('pointerdown', e => {
+  if (!paintOn || e.button !== 0 || !paintableVariant()) return;
+  painting = true; curStroke = null; renderer.domElement.setPointerCapture(e.pointerId); paintAt(e, true);
+});
+renderer.domElement.addEventListener('pointermove', e => { if (painting) paintAt(e, false); });
+window.addEventListener('pointerup', () => { painting = false; curStroke = null; });
+function setPaint(on) {
+  paintOn = on;
+  controls.mouseButtons = on ? { LEFT: null, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE }
+                             : { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.PAN };
+  if (on) { controls.autoRotate = false; document.getElementById('spin').checked = false; attachOverlay(cur.b); }
+  overlayVisible(on);
+  note.textContent = !on ? '' : (paintableVariant() ? '좌드래그 = 칠하기, 우드래그 = 회전' : '이 버전은 UV가 달라 칠할 수 없음 (규칙 기반 복원본을 고르세요)');
+}
+document.getElementById('paintOn').addEventListener('change', e => setPaint(e.target.checked));
+document.getElementById('brush').addEventListener('input', e => document.getElementById('brushv').textContent = e.target.value + ' px');
+document.getElementById('undoStroke').addEventListener('click', () => { strokes.pop(); redrawMask(); });
+document.getElementById('clearMask').addEventListener('click', () => { strokes = []; baseMask = null; redrawMask(); });
+document.getElementById('loadMask').addEventListener('click', async () => {
+  note.textContent = '불러오는 중…';
+  const r = await fetch(`/api/mask/load?key=${sel.value}`, { cache: 'no-store' });
+  if (!r.ok) { note.textContent = '저장된 마스크 없음'; return; }
+  const img = new Image();
+  img.onload = () => {
+    const t = document.createElement('canvas'); t.width = t.height = MASKSZ;
+    const tc = t.getContext('2d'); tc.drawImage(img, 0, 0, MASKSZ, MASKSZ);
+    const d = tc.getImageData(0, 0, MASKSZ, MASKSZ);
+    for (let i = 0; i < d.data.length; i += 4) {
+      const on = d.data[i] > 127;
+      d.data[i] = 255; d.data[i + 1] = 32; d.data[i + 2] = 32; d.data[i + 3] = on ? 217 : 0;
+    }
+    tc.putImageData(d, 0, 0);
+    baseMask = t; strokes = []; redrawMask();
+    note.textContent = '불러옴';
+  };
+  img.src = URL.createObjectURL(await r.blob());
+});
+document.getElementById('saveMask').addEventListener('click', async () => {
+  const d = mctx.getImageData(0, 0, MASKSZ, MASKSZ);
+  const out = document.createElement('canvas'); out.width = out.height = MASKSZ;
+  const oc = out.getContext('2d'); const od = oc.createImageData(MASKSZ, MASKSZ);
+  let n = 0;
+  for (let i = 0; i < d.data.length; i += 4) {
+    const v = d.data[i + 3] > 8 ? 255 : 0;                            // any painted alpha -> white
+    od.data[i] = od.data[i + 1] = od.data[i + 2] = v; od.data[i + 3] = 255;
+    if (v) n++;
+  }
+  oc.putImageData(od, 0, 0);
+  note.textContent = '저장 중…';
+  const r = await fetch('/api/mask/save', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ key: sel.value, png: out.toDataURL('image/png') }) });
+  const j = await r.json();
+  if (!r.ok) { note.textContent = '저장 실패: ' + (j.error || r.status); return; }
+  maskDirty = false;
+  note.textContent = `저장됨 ${j.path} (${(100 * n / (MASKSZ * MASKSZ)).toFixed(3)} %)`;
+  document.getElementById('status').textContent =
+    `마스크 저장: ${j.path}\n복원에 쓰기: python restore_original_colour.py --model <obj> --out <dir> --material ${manifest[sel.value].material || 'earthenware'} --remove-cracks --crack-mask ${j.path.replace('ai/3d-to-3d-color/', '')} ...`;
+});
+document.getElementById('runMask').addEventListener('click', async () => {
+  if (maskDirty && !confirm('저장하지 않은 붓질이 있습니다. 저장한 마스크로 복원할까요?')) return;
+  const key = sel.value, v = manifest[key].variants[parseInt(vsel.value || 0)];
+  const mat = v.material || manifest[key].material || 'earthenware';
+  const extra = [];                                                   // reproduce the options of the variant on screen
+  if (v.protect_dark) extra.push('--protect-dark', String(v.protect_dark));
+  if (v.tone != null) extra.push('--tone', String(v.tone));
+  if (v.destain != null) extra.push('--destain', String(v.destain));
+  if (v.chroma != null) extra.push('--chroma', String(v.chroma));
+  const cp = v.crack_params || {};                                    // same crack detection, else the rerun finds fewer
+  if (cp.dark_thr != null) extra.push('--crack-dark-thr', String(cp.dark_thr));
+  if (cp.min_diag != null) extra.push('--crack-min-diag', String(cp.min_diag));
+  if (cp.max_thickness != null) extra.push('--crack-max-thickness', String(cp.max_thickness));
+  if (cp.fill_band != null) extra.push('--fill-band', String(cp.fill_band));
+  if (cp.groove_rings != null) extra.push('--groove-rings', String(cp.groove_rings));
+  const r = await fetch('/api/restore', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ key, material: mat, extra, base_mask: v.crack_mask || null }) });
+  const j = await r.json();
+  if (!r.ok) { note.textContent = '실행 실패: ' + (j.error || r.status); return; }
+  note.textContent = '복원 시작…';
+  const status = document.getElementById('status');
+  const tick = setInterval(async () => {
+    const st = await (await fetch('/api/restore/status', { cache: 'no-store' })).json();
+    const mm = Math.floor((st.elapsed_s || 0) / 60), ss = String((st.elapsed_s || 0) % 60).padStart(2, '0');
+    note.textContent = st.done ? '복원 끝' : `복원 실행 중 ${mm}:${ss} (8K 한 건에 12~15분)`;
+    status.textContent = (st.log || []).slice(-4).join('\n');
+    if (!st.done) return;
+    clearInterval(tick);
+    if (st.rc) { note.textContent = '복원 실패 (rc ' + st.rc + '), 로그 확인'; return; }
+    note.textContent = '복원 완료 — 새 버전을 불러옵니다';
+    const m2 = await (await fetch('viewer/manifest.json', { cache: 'no-store' })).json();
+    manifest[key] = m2[key];
+    for (const k in cache) delete cache[k];                          // the GLBs were rewritten
+    fillVariants(key);
+    const i = manifest[key].variants.findIndex(v => (v.tag || '').endsWith('_brush'));
+    vsel.value = i >= 0 ? i : 0;
+    show(key, parseInt(vsel.value));
+  }, 4000);
+});
+window.addEventListener('beforeunload', e => { if (maskDirty) { e.preventDefault(); e.returnValue = ''; } });
+window.__paint = { get strokes() { return strokes; }, redrawMask, maskCanvas, pickUV, paintAt, setPaint };   // test hook
+
+function render() {
+  const W = window.innerWidth, H = window.innerHeight;
+  controls.update();
+  if (layout === 'split') {
+    camera.aspect = (W / 2) / H; camera.updateProjectionMatrix();
+    renderer.setViewport(0, 0, W / 2, H); renderer.setScissor(0, 0, W / 2, H); renderer.render(sceneA, camera);
+    renderer.setViewport(W / 2, 0, W / 2, H); renderer.setScissor(W / 2, 0, W / 2, H); renderer.render(sceneB, camera);
+  } else {
+    camera.aspect = W / H; camera.updateProjectionMatrix();
+    renderer.setViewport(0, 0, W, H); renderer.setScissor(0, 0, W, H);
+    renderer.render(layout === 'orig' ? sceneA : sceneB, camera);
+  }
+  requestAnimationFrame(render);
+}
+fillVariants(sel.value);
+show(sel.value, 0);
+render();
+</script>
+</body>
+</html>

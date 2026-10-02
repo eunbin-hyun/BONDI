@@ -1,0 +1,27 @@
+{
+ "key": "duk006294",
+ "material": "whiteware",
+ "cover": 0.45,
+ "severity": 8.0,
+ "seed": 0,
+ "source_texture": "C:\\ai\\poc_inputs\\duk006294\\duk006294-000-30000.jpg",
+ "input_written": "C:\\ai\\poc_synth\\duk006294",
+ "patina_ab_from_real_damage": [
+  -3.664516149317714,
+  20.593832294762894
+ ],
+ "dL_from_real_damage": 6.730178051125435,
+ "healthy_fraction_of_valid": 0.12351973819342915,
+ "truth_fraction_of_valid": 0.054295847824930694,
+ "healthy_left_fraction_of_valid": 0.06922389036849845,
+ "applied": {
+  "mean_dL": 5.872437045313851,
+  "mean_dE_ab": 7.281403178733462,
+  "L_std_before": 2.6043032308329988,
+  "L_std_after": 4.206542491912842
+ },
+ "real_damage_reference": {
+  "mean_L_healthy": 88.2407464129809,
+  "mean_L_damage": 81.51056836185546
+ }
+}

@@ -1,0 +1,32 @@
+{
+  "folder": "v32-cyl+biharm+n6+trellisfill+labshift+up2",
+  "glb": "restored_labshift.glb",
+  "tiles": {
+    "carried": 60,
+    "filled": 60
+  },
+  "carried_lab": [
+    50.97,
+    0.56,
+    11.63
+  ],
+  "filled_lab": [
+    49.57,
+    0.1,
+    11.79
+  ],
+  "internal_dE": 1.483,
+  "internal_spec": {
+    "L": 0.00363,
+    "a": 0.0114,
+    "b": 0.00278
+  },
+  "internal_spec_mean": 0.00594,
+  "carried_dE_vs_origin": 0.0,
+  "carried_spec_vs_origin": 0.0,
+  "desc": "v28 + Lab 평균이동",
+  "rel_internal_dE": 0.203,
+  "rel_internal_spec": 0.927,
+  "rel_carried_dE": 0.0,
+  "rel_carried_spec": 0.0
+}

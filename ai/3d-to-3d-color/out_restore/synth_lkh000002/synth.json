@@ -1,0 +1,27 @@
+{
+ "key": "lkh000002",
+ "material": "bronze",
+ "cover": 0.45,
+ "severity": 8.0,
+ "seed": 0,
+ "source_texture": "C:\\ai\\poc_inputs\\lkh000002\\lkh000002-000-30000.jpg",
+ "input_written": "C:\\ai\\poc_synth\\lkh000002",
+ "patina_ab_from_real_damage": [
+  -1.3431269533725416,
+  8.894110707620085
+ ],
+ "dL_from_real_damage": 25.0,
+ "healthy_fraction_of_valid": 2.9297166061722954e-05,
+ "truth_fraction_of_valid": 1.2265897244320967e-05,
+ "healthy_left_fraction_of_valid": 1.7031268817401986e-05,
+ "applied": {
+  "mean_dL": 23.392598953765212,
+  "mean_dE_ab": 23.19390417056802,
+  "L_std_before": 1.9810999862114937,
+  "L_std_after": 13.95492935180664
+ },
+ "real_damage_reference": {
+  "mean_L_healthy": 62.60645837701824,
+  "mean_L_damage": 24.053434624812176
+ }
+}

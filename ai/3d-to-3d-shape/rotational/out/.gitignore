@@ -1,0 +1,5 @@
+# 복원본 GLB 는 저장소에 넣지 않는다 (CONTRIBUTING.md §10 — 산출물은 공유 스토리지).
+# 재현에 필요한 것은 manifest.json 이고, 근거 그림만 figures/ 에 LFS 로 둔다.
+*.glb
+*.ply
+*.npz

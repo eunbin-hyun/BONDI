@@ -1,0 +1,67 @@
+{
+ "model": "C:/ai/poc_inputs/ssu022891/ssu022891-001-30000.obj",
+ "material": "earthenware",
+ "preset": {
+  "group": "ceramic",
+  "target_ab": [
+   13.0,
+   30.0
+  ],
+  "pristine_L": 50.0,
+  "pbr": [
+   0.0,
+   0.75
+  ],
+  "w_c": 0.05
+ },
+ "mode": "conserved",
+ "method": "idealized_revolution",
+ "texture_source": "out_restore/poc_ssu022891_v16/texture_restored_conserved_earthenware_v16.png",
+ "axis_world": [
+  0.010779629061021334,
+  -0.0074277970332450325,
+  0.9999143100428856
+ ],
+ "origin_world": [
+  -0.599592949280588,
+  -1.5513456551382,
+  214.58548997660614
+ ],
+ "z_scan": [
+  -214.40860076374622,
+  169.28646894428812
+ ],
+ "z_tip": -215.50528082269398,
+ "tip": "round",
+ "wall_mm": 7.487064550394166,
+ "r_max_mm": 131.4653569715856,
+ "n_theta": 720,
+ "z_step_mm": 1.5,
+ "atlas": 8192,
+ "coverage_outer": 0.9862579107284546,
+ "coverage_inner": 0.9417517781257629,
+ "ideal_faces": 748800,
+ "cracks_detected": {
+  "outer": {
+   "fraction_of_covered": 0.04195062102681653,
+   "components": 18
+  },
+  "inner": {
+   "fraction_of_covered": 0.002803854375446471,
+   "components": 2
+  }
+ },
+ "flatten": [
+  1.0,
+  25.0
+ ],
+ "seam_mm": 2.5,
+ "metrics": {},
+ "protect_dark": null,
+ "chroma_strength": null,
+ "tone": {},
+ "destain": {},
+ "normal_map": true,
+ "crack_mask": "out_restore/sam_ssu022891/mask_seam_semiauto.png",
+ "elapsed_s": 318.4638969898224
+}

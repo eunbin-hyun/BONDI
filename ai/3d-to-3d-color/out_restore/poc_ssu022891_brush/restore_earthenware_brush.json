@@ -1,0 +1,137 @@
+{
+  "model": "C:/ai/poc_inputs/ssu022891/ssu022891-001-30000.obj",
+  "material": "earthenware",
+  "preset": {
+    "group": "ceramic",
+    "target_ab": [
+      13.0,
+      30.0
+    ],
+    "pristine_L": 50.0,
+    "pbr": [
+      0.0,
+      0.75
+    ],
+    "w_c": 0.05
+  },
+  "mode": "conserved",
+  "geometry": "ssu022891-001-30000",
+  "texture_size": [
+    8192,
+    8192
+  ],
+  "valid_texel_fraction": 0.6127236038446426,
+  "target_ab": [
+    10.974694809316127,
+    27.04113260127082
+  ],
+  "target_source": "blend 0.38*healthy median + 0.62*preset (PoC rule)",
+  "glaze_dominant_ab": [
+    6.4956687439476495,
+    16.870558458955536
+  ],
+  "thresholds": {
+    "healthy_quantile": 0.15,
+    "grow_dE": 6.0,
+    "min_healthy_frac": 0.03,
+    "damage_dE_full": 30.0,
+    "protect_dE": 25.0,
+    "near_black_L": 25.0,
+    "incised_atten": 0.3,
+    "clamp_frac": 0.0007,
+    "plausible_dE": 15.0,
+    "damage_report_d": 0.2
+  },
+  "healthy_vs_preset_dE_ab": 9.435873889433623,
+  "target_mode": "auto",
+  "protect_dark": "off",
+  "protect_dark_thr_fixed_L": null,
+  "chroma_strength": 0.85,
+  "chroma_var_keep": 0.15,
+  "pristine_skipped": null,
+  "normal_map": true,
+  "crack_geometry": {
+    "method": "biharmonic",
+    "rings": 3,
+    "vertices_unique": 190712,
+    "free_vertex_fraction": 0.24639246612693486,
+    "seed_vertex_fraction": 0.05648831746298083,
+    "disp_mean_free": 0.8878582516736,
+    "disp_p95_free": 2.1070339021893854,
+    "disp_max_before_clamp": 6.504832131633427,
+    "clamp_mm_equiv": 10.723713484949897,
+    "clamped_fraction": 0.0,
+    "crack_vertex_fraction": 0.08079010994023995,
+    "reemboss": {
+      "strength": 1.0,
+      "cap_mm": 0.6,
+      "mean_abs_mm": 0.04232659935951233
+    }
+  },
+  "uv_seams": {
+    "mean_abs_dL_across_seams": 0.6845465261402318,
+    "border_band": {
+      "band_px": 24,
+      "band_fraction_of_valid": 0.07985773550716047,
+      "mean_dL_in_band": 0.7521809101117725
+    }
+  },
+  "pattern_mirror": {
+    "band_mm": 3.0,
+    "core_fraction_of_valid": 0.06293461312523582,
+    "band_fraction_of_valid": 0.16917830448244536,
+    "mirror_source_found": 0.9828781544394534
+  },
+  "wear_mask": null,
+  "crack_mask": "out_restore/mask_paint/ssu022891_combined.png",
+  "crack_params": {
+    "dark_thr": 2.35,
+    "min_diag": 180.0,
+    "max_thickness": 26.0,
+    "fill_band": 3.0,
+    "groove_rings": 3
+  },
+  "tone": {
+    "strength": 0.8,
+    "target_L": 45.58847200882721,
+    "surface_mean_L_before": 31.27361269319079,
+    "gain": 0.9889080542476753,
+    "surface_mean_L_after": 42.72550014569993
+  },
+  "destain": {
+    "strength": 0.7,
+    "size_px": 512,
+    "mean_lift_L_damage": 2.224245621431568
+  },
+  "metrics": {
+    "L_ssim_valid": 0.8989940005490327,
+    "healthy_dE_mean": 11.407501001031111,
+    "damage_dE_ab_to_target_before": 10.225533597163373,
+    "damage_dE_ab_to_target_after": 1.1625105876855206,
+    "healthy_fraction": 0.04923511981086201,
+    "damage_fraction": 0.6870449888537431,
+    "protect_fraction": 0.0,
+    "protect_parts_fraction": {
+      "holes": 0.0,
+      "near_black": 0.0,
+      "painted": 0.0,
+      "inlay": 0.0,
+      "wear": 0.0,
+      "incised": 0.10000001215977408
+    },
+    "dark_spot_fraction": 7.612018574784496e-06,
+    "dark_protect_threshold_L": 21.105798211725087,
+    "alpha_sidecar_used": false,
+    "cracks": {
+      "enabled": true,
+      "components": 104,
+      "fill_fraction": 0.02358672721747768
+    }
+  },
+  "smoothing": null,
+  "outputs": {
+    "conserved": "out_restore/poc_ssu022891_brush\\ssu022891-001-30000_restored_conserved_earthenware_brush.glb"
+  },
+  "provenance": "ai_inferred - colour restoration hypothesis (rule-based v1); damage map = FR-UI-008 layer",
+  "elapsed_s": 1240.7347071170807
+}

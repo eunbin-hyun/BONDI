@@ -1,0 +1,12 @@
+# virtual restoration output (relative paths fixed)
+newmtl material_1
+Ka 1 1 1
+Kd 1 1 1
+map_Kd bon004740-000-30000_pristine.jpg
+Ks 0.35 0.30 0.18
+Ns 90
+illum 2
+Pm 1.0
+Pr 0.35
+norm bon004740-000-30000_nor.jpg
+

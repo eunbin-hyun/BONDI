@@ -1,0 +1,27 @@
+{
+ "key": "don000498_001",
+ "material": "celadon",
+ "cover": 0.45,
+ "severity": 8.0,
+ "seed": 0,
+ "source_texture": "C:\\ai\\poc_inputs\\don000498_001\\don000498_001_30000.jpg",
+ "input_written": "C:\\ai\\poc_synth\\don000498_001",
+ "patina_ab_from_real_damage": [
+  0.7877338974467792,
+  12.541708783060079
+ ],
+ "dL_from_real_damage": 9.963297626393128,
+ "healthy_fraction_of_valid": 0.1391621123882758,
+ "truth_fraction_of_valid": 0.0612388996218063,
+ "healthy_left_fraction_of_valid": 0.0779232127664695,
+ "applied": {
+  "mean_dL": 8.187366702256883,
+  "mean_dE_ab": 8.154066065694183,
+  "L_std_before": 1.6661522387788341,
+  "L_std_after": 3.618035078048706
+ },
+ "real_damage_reference": {
+  "mean_L_healthy": 59.7544045697357,
+  "mean_L_damage": 49.79110694334257
+ }
+}
