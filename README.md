@@ -1,10 +1,10 @@
 # BONDI
 
-![BONDI — AI 유물 복원 VR 박물관](docs/images/bondi-cover.png)
+![BONDI VR 박물관 유물 인터랙션](docs/images/bondi-vr-demo.gif)
 
 > 손상된 유물을 3D로 생성하고 결손 형상과 표면을 복원한 뒤, 실제 크기의 VR 박물관에서 관람하는 체험형 프로젝트입니다.
 
-[핵심 기능](#핵심-기능) · [AI 복원](#ai-복원-파이프라인) · [VR 전시](#vr-전시) · [검증](#구현-결과와-검증-범위) · [문서](#문서)
+[핵심 기능](#핵심-기능) · [AI 복원](#ai-복원-파이프라인) · [VR 전시](#vr-전시) · [검증](#구현-결과와-검증-범위) · [산출물](#산출물) · [문서](#문서)
 
 | 항목 | 내용 |
 | --- | --- |
@@ -15,6 +15,14 @@
 | 프로젝트 키 | `S15P21C201` |
 
 `본디`는 “본래의 모양이나 처지”라는 뜻입니다. BONDI는 훼손된 유물을 역사적 정답으로 단정하지 않고, 사진과 3D 데이터에서 만든 **AI 복원 가설**을 관람자가 직접 비교하고 체험할 수 있게 합니다.
+
+## 산출물
+
+- [최종 발표자료](deliverables/presentation/BONDI_Final_Presentation.pptx)
+- [프로젝트 소개 영상](deliverables/videos/BONDI_Project_Overview.mp4)
+- [VR 박물관 전체 시연 영상](deliverables/videos/BONDI_VR_Demo_Full.mp4)
+
+파일 설명과 Git LFS 이용 방법은 [`deliverables/README.md`](deliverables/README.md)에 정리했습니다.
 
 ## 문제와 접근
 
@@ -172,6 +180,7 @@ VR 구현과 성능 조정 내용은 [VR 체험 문서](docs/VR_EXPERIENCE.md)�
 BONDI/
 ├── ai/       2D→3D 생성, 형상·색·재질 복원, 검증 코드
 ├── assets/   전시용 유물 자산 번들
+├── deliverables/ 최종 발표자료와 시연 영상
 ├── vr/       Unreal Engine 5 VR 프로젝트
 ├── infra/    유물 자료 저장소와 배포 구성
 ├── tools/    Blender·Unreal·자산 검사 도구
