@@ -1,0 +1,237 @@
+{
+  "artifactId": "inwangjesaekdo",
+  "version": "0.10.0",
+  "artifactClass": "scene",
+  "_artifactClass_note": "명세 19장 개정안(docs/AMEND-19.md) 선반영. 현행 19.1은 손상 복원형(object)만 전제한다. 개정 전까지는 선택 필드로 취급.",
+  "title": "정선 필 인왕제색도 — 실측 지형 기반 3D 복원",
+  "description": "겸재 정선의 인왕제색도(1751)를 국토지리정보원 1:5,000 수치지형도에서 만든 5 m DEM에 정합해 3D로 복원한 것. 지형·나무·기와집·운무를 각각 독립 개체로 분리했다.",
+  "period": "조선 1751년 (신미년)",
+  "type": "회화 기반 경관 복원",
+  "source": {
+    "kind": "photo",
+    "credit": "정선 필 인왕제색도 (국보) — 소장기관 표기 확인 필요",
+    "license": "확인 필요 — 공개 이미지 이용조건 미확인",
+    "url": null,
+    "terrain": "국토지리정보원 수치지형도 1:5,000 도엽 37608048·049·050·058·059·060·069·070·079·080"
+  },
+  "stages": [
+    {
+      "id": "terrain_real",
+      "label": "실측 지형",
+      "method": "등고선·표고점 Delaunay 보간 5 m DEM",
+      "human_in_loop": false,
+      "ai_generated": false
+    },
+    {
+      "id": "terrain_jeong",
+      "label": "정선의 지형",
+      "method": "앙각 깊이별 과장 g(d) 적용 (distortion_curves.json)",
+      "human_in_loop": true,
+      "ai_generated": false
+    },
+    {
+      "id": "trees",
+      "label": "소나무",
+      "method": "사람이 채집한 밑동 297점 + 높이 14그루 측정",
+      "human_in_loop": true,
+      "ai_generated": false
+    },
+    {
+      "id": "house",
+      "label": "기와집",
+      "method": "지붕선 채집 + 각크기 앵커 141 m",
+      "human_in_loop": true,
+      "ai_generated": false
+    },
+    {
+      "id": "fog",
+      "label": "운무",
+      "method": "운무 상단선 61점 → 등고도 157 m 층 + 사면 껍질",
+      "human_in_loop": true,
+      "ai_generated": false
+    }
+  ],
+  "provenance": {
+    "observed": [
+      "지형 고도 (수치지형도 1:5,000 등고선·표고점)",
+      "시점 방위·초점거리 (스카이라인 정합)",
+      "나무 밑동 297점·높이 14그루·지붕선·기둥·운무 상단선 61점 (사람 채집)"
+    ],
+    "ai_inferred": [],
+    "estimated": [
+      "과장계수 g(d) — 스카이라인·운무선 정합으로 추정",
+      "전경 밴드 눈높이 17 m — 나무 높이 일관성 최소화로 추정",
+      "나무 개체 높이 — 사람이 잰 14그루를 화면 최근접으로 전파",
+      "기와집 평면 깊이·벽 높이 — 정면 폭에서 비례 가정",
+      "운무 두께 80 m·380 m 이내 청천 — 원화 관찰에 의한 조형 선택",
+      "전경 지면 잔결 — 절차적 프랙탈 층(최대 1.15 m, 620 m 밖 0). 측정값이 아니라 연출층. micro_relief.json 참조"
+    ]
+  },
+  "limitations": [
+    "기관 공식 유물 ID가 아직 배정되지 않았다 (작업용 ID: inwangjesaekdo).",
+    "원화 이미지의 소장기관 표기와 이용조건을 확인하지 않았다. 확인 전 대외 공개 금지.",
+    "외부 미술사 전문가 검토는 받지 않았다.",
+    "나무 높이 자동 추출은 실패했다 — 먹 농도 기반 추출과 사람 측정의 상관 0.094. 따라서 개체 높이는 사람이 잰 14그루에서 전파한 값이며 개별 나무의 실측이 아니다.",
+    "전경 밴드에 눈높이 17 m를 쓴 것은 단일 시점으로 전경·중경을 동시에 만족시킬 수 없기 때문이다 (중경 나무·기와집은 1.6 m를 요구). 원화가 다시점으로 구성됐다는 해석이며 검증된 사실이 아니다.",
+    "운무 상단선의 등고도성은 귀무모형 대비 0.51배로 유의하지만, 채집선을 아래로 100~200 px 옮기면 산포가 더 작아져 채집 위치를 고유하게 지지하지는 않는다.",
+    "DEM 화소의 19.1 %는 자료가 없는 구간이다 — 미보유 도엽 + Delaunay가 자료 없는 쪽으로 만든 슬리버 삼각형(가장 가까운 입력점까지 65 m 초과)을 결측으로 되돌린 것. 이 구간은 라플라스 막으로 매끄럽게 채웠고(mask_slivers.py + refill_dem.py), 원화 시야 안에는 거의 들어오지 않는다. 시야 커버율은 99.2 %로 변화 없다.",
+    "지형에 원화를 투영할 때 화소 신축이 12배(입사각 85.2°)를 넘는 자리는 투영을 포기하고 평면 베이스컬러로 대체했다. 그 결과 전경 지면의 무늬는 원화가 아니라 '원화 하단 지면 톤 + 지형 음영 + 절차적 잔결'이다.",
+    "전경 지면 잔결(최대 1.15 m)은 연출용 절차적 층이다. 나무 밑동 역산으로 전경 지형을 복원하면 제거해야 한다.",
+    "기와집 폭 22.3 m는 지붕선 획 2개를 한 채로 병합한 결과다. 두 채일 가능성이 있다."
+  ],
+  "runtime": {
+    "triangles": 24116,
+    "textures": 2,
+    "master_textures": 2,
+    "note": "runtime 지형은 평면(위에서 본) UV에 베이스컬러 1024 + 노멀 1024 두 장. 노멀맵은 5m DEM 고주파 + 원화 먹 농도(부벽준) 범프를 합친 것. master 지형은 2048x3380 투영 아틀라스 1장.",
+    "budget_spec20": 30000
+  },
+  "review": {
+    "by": null,
+    "at": null,
+    "decision": "pending"
+  },
+  "coordinate_contract": {
+    "spec": "19.3",
+    "unit": "meter",
+    "up_axis": "Z",
+    "pivot": "바닥 중심",
+    "format": "glTF 2.0 GLB",
+    "stages_aligned": true,
+    "pivot_offset_from_camera_frame_m": [
+      1.0,
+      1175.0,
+      -154.33
+    ]
+  },
+  "parts_master": [
+    {
+      "part": "terrain_real",
+      "desc": "실측 지형",
+      "file": "master/terrain_real.glb",
+      "triangles": 396150,
+      "size_m": [
+        2502.0,
+        2850.0,
+        303.5
+      ],
+      "bytes": 16315604
+    },
+    {
+      "part": "terrain_jeong",
+      "desc": "정선 과장 지형 g(d)",
+      "file": "master/terrain_jeong.glb",
+      "triangles": 396150,
+      "size_m": [
+        2502.0,
+        2850.0,
+        533.2
+      ],
+      "bytes": 16315608
+    },
+    {
+      "part": "trees",
+      "desc": "소나무 297",
+      "file": "master/trees.glb",
+      "triangles": 21467,
+      "size_m": [
+        472.1,
+        1108.2,
+        390.2
+      ],
+      "bytes": 479564
+    },
+    {
+      "part": "house",
+      "desc": "기와집 2동",
+      "file": "master/house.glb",
+      "triangles": 32,
+      "size_m": [
+        46.3,
+        48.9,
+        7.8
+      ],
+      "bytes": 1848
+    },
+    {
+      "part": "fog",
+      "desc": "운무 사면 껍질",
+      "file": "master/fog.glb",
+      "triangles": 22538,
+      "size_m": [
+        2496.0,
+        2196.0,
+        80.0
+      ],
+      "bytes": 473176
+    },
+    {
+      "part": "inscription",
+      "desc": "화제·인장 (공중 판)",
+      "file": "master/inscription.glb",
+      "triangles": 2,
+      "size_m": [
+        20.1,
+        0.0,
+        34.9
+      ],
+      "bytes": 1000084
+    },
+    {
+      "part": "base",
+      "desc": "디오라마 받침",
+      "file": "master/base.glb",
+      "triangles": 2682,
+      "size_m": [
+        2508.0,
+        2856.0,
+        670.1
+      ],
+      "bytes": 61784
+    }
+  ],
+  "parts_runtime": [
+    {
+      "part": "terrain_real",
+      "file": "runtime/terrain_real.glb",
+      "triangles": 10000,
+      "bytes": 2922428
+    },
+    {
+      "part": "terrain_jeong",
+      "file": "runtime/terrain_jeong.glb",
+      "triangles": 9999,
+      "bytes": 2922416
+    },
+    {
+      "part": "trees",
+      "file": "runtime/trees.glb",
+      "triangles": 10271,
+      "bytes": 239268
+    },
+    {
+      "part": "house",
+      "file": "runtime/house.glb",
+      "triangles": 32,
+      "bytes": 1848
+    },
+    {
+      "part": "fog",
+      "file": "runtime/fog.glb",
+      "triangles": 1130,
+      "bytes": 28076
+    },
+    {
+      "part": "inscription",
+      "file": "runtime/inscription.glb",
+      "triangles": 2,
+      "bytes": 1000084
+    },
+    {
+      "part": "base",
+      "file": "runtime/base.glb",
+      "triangles": 2682,
+      "bytes": 61784
+    }
+  ]
+}

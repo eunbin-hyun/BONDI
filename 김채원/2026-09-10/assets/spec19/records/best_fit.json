@@ -1,0 +1,32 @@
+{
+  "painting": "inwangjesaekdo.jpg",
+  "painting_size": [
+    3000,
+    1715
+  ],
+  "dem": "inwang_5m_5179.tif",
+  "crs": "EPSG:5179",
+  "viewpoint": {
+    "lon": 126.971,
+    "lat": 37.5816,
+    "ground_elev_m": 40.6,
+    "eye_height_m": 1.6
+  },
+  "camera": {
+    "azimuth_deg": 288.93,
+    "hfov_deg": 45.0,
+    "focal_px": 3621.3,
+    "principal_x_px": 1500.0,
+    "horizon_y_px": 1526.3,
+    "note": "horizon_y는 이미지 하단 밖(1715px 초과)일 수 있음 = 카메라가 화면 중심보다 아래를 봄"
+  },
+  "distortion": {
+    "vertical_gain_g": 1.711,
+    "meaning": "정선이 능선 앙각을 실제 대비 g배로 그림"
+  },
+  "fit_quality": {
+    "nRMSE": 0.0708,
+    "RMSE_deg": 0.56,
+    "skyline_angular_span_deg": 8.0
+  }
+}

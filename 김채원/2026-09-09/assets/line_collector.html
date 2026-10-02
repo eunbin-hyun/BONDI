@@ -1,0 +1,561 @@
+<title>인왕제색도 라인 채집</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#141210; --panel:#1C1916; --panel2:#232019; --rule:#332E26;
+  --paper:#E9E0CE; --dim:#9C9082; --dimmer:#6E6558;
+  --seal:#C8442E;
+  --l1:#4FB3D9; --l2:#E08A3C; --l3:#E0479E; --l4:#6FBF73; --l5:#B79CE8; --l6:#E8D24F;
+  --ok:#7FC08A;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--paper);
+  font-family:"IBM Plex Sans KR",system-ui,-apple-system,"Malgun Gothic",sans-serif;
+  height:100vh;display:grid;grid-template-columns:296px 1fr;overflow:hidden}
+button,select,input{font-family:inherit;color:inherit}
+kbd{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;background:var(--panel2);
+  border:1px solid var(--rule);border-radius:3px;padding:1px 5px;color:var(--dim)}
+.num{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+
+/* ---- rail ---- */
+aside{background:var(--panel);border-right:1px solid var(--rule);
+  display:flex;flex-direction:column;min-height:0;overflow-y:auto}
+.brand{padding:20px 20px 16px;border-bottom:1px solid var(--rule)}
+.brand h1{font-family:"Gowun Batang",serif;font-size:21px;font-weight:700;margin:0;letter-spacing:.02em}
+.brand p{margin:6px 0 0;font-size:12px;line-height:1.5;color:var(--dim)}
+.sec{padding:16px 20px;border-bottom:1px solid var(--rule);display:flex;flex-direction:column;gap:10px}
+.sec>h2{margin:0;font-size:10.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--dimmer)}
+
+.layer{display:grid;grid-template-columns:14px 1fr auto;align-items:center;gap:10px;
+  padding:8px 10px;border:1px solid transparent;border-radius:5px;cursor:pointer;background:none;
+  text-align:left;width:100%;transition:background .12s,border-color .12s}
+.layer:hover{background:var(--panel2)}
+.layer[aria-pressed="true"]{background:var(--panel2);border-color:var(--rule)}
+.layer:focus-visible{outline:2px solid var(--seal);outline-offset:1px}
+.swatch{width:14px;height:14px;border-radius:3px}
+.layer .nm{font-size:13.5px;line-height:1.25}
+.layer .ty{display:block;font-size:10.5px;color:var(--dimmer);margin-top:2px}
+.layer .ct{font-size:12px;color:var(--dim);text-align:right}
+
+.row{display:flex;gap:8px}
+.btn{flex:1;padding:8px 10px;background:var(--panel2);border:1px solid var(--rule);border-radius:5px;
+  font-size:12.5px;cursor:pointer;transition:border-color .12s,color .12s}
+.btn:hover{border-color:var(--dim)}
+.btn:focus-visible{outline:2px solid var(--seal);outline-offset:1px}
+.btn.warn:hover{border-color:var(--seal);color:var(--seal)}
+.check{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--dim);cursor:pointer}
+.check input{accent-color:var(--seal);width:14px;height:14px}
+.imgcard{background:var(--panel2);border:1px solid var(--rule);border-radius:5px;padding:9px 11px}
+.imgname{font-size:12px;color:var(--paper);word-break:break-all}
+.imgmeta{font-size:11px;color:var(--dimmer);margin-top:3px}
+.keys{display:grid;grid-template-columns:auto 1fr;gap:7px 12px;font-size:11.5px;color:var(--dim);align-items:center}
+
+/* ---- stage ---- */
+main{position:relative;min-width:0;display:flex;flex-direction:column}
+#stage{flex:1;position:relative;overflow:hidden;background:
+  repeating-conic-gradient(#191612 0% 25%, #1D1A15 0% 50%) 50%/22px 22px}
+#cv{position:absolute;inset:0;width:100%;height:100%;cursor:crosshair;display:block}
+#cv.pan{cursor:grab}
+#loupe{position:absolute;width:150px;height:150px;border:1px solid var(--rule);border-radius:50%;
+  pointer-events:none;display:none;box-shadow:0 6px 22px rgba(0,0,0,.6);background:var(--panel)}
+#drop{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:32px;
+  background:linear-gradient(180deg,#141210 0%,#191713 100%)}
+#drop .inner{max-width:430px}
+#drop h2{font-family:"Gowun Batang",serif;font-size:26px;margin:0 0 12px}
+#drop p{color:var(--dim);font-size:13.5px;line-height:1.65;margin:0 0 20px}
+#drop label{display:inline-block;padding:10px 20px;background:var(--seal);color:#fff;border-radius:5px;
+  font-size:13.5px;cursor:pointer;font-weight:500}
+#drop label:focus-within{outline:2px solid var(--paper);outline-offset:2px}
+#drop input{position:absolute;opacity:0;width:1px;height:1px}
+#drop .hint{margin-top:14px;font-size:12px;color:var(--dimmer)}
+
+.status{display:flex;align-items:center;gap:0;border-top:1px solid var(--rule);background:var(--panel);
+  font-size:12px;overflow-x:auto;white-space:nowrap}
+.cell{padding:9px 16px;border-right:1px solid var(--rule);display:flex;gap:8px;align-items:baseline}
+.cell b{font-weight:500;color:var(--dimmer);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase}
+.cell span{color:var(--paper)}
+.spacer{flex:1;border-right:none}
+.zoomer{display:inline-flex;gap:4px;margin-left:4px}
+.zoomer button{background:var(--panel2);border:1px solid var(--rule);color:var(--dim);
+  border-radius:4px;padding:1px 7px;font-size:11.5px;line-height:1.5;cursor:pointer}
+.zoomer button:hover{border-color:var(--dim);color:var(--paper)}
+.zoomer button:focus-visible{outline:2px solid var(--seal);outline-offset:1px}
+.save{padding:9px 16px;border-left:1px solid var(--rule);color:var(--dim)}
+.save.on{color:var(--ok)}
+.save.err{color:var(--seal)}
+#out{width:100%;height:112px;background:var(--panel2);border:1px solid var(--rule);border-radius:5px;
+  color:var(--dim);font-family:"IBM Plex Mono",monospace;font-size:10.5px;padding:8px;resize:vertical}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<aside>
+  <div class="brand">
+    <h1>인왕제색도 라인 채집</h1>
+    <p>운무 상단선을 직접 따서 과장 배율 <span class="num">g</span>를 확정하고,
+       자동 추출기의 정답으로 쓴다.</p>
+  </div>
+
+  <div class="sec" id="imgSec" hidden>
+    <h2>원화</h2>
+    <div class="imgcard">
+      <div class="imgname num" id="imgName">—</div>
+      <div class="imgmeta" id="imgMeta">—</div>
+    </div>
+    <div class="row">
+      <label class="btn" style="text-align:center">다른 그림 열기
+        <input type="file" id="file2" accept="image/*" hidden></label>
+      <button class="btn warn" id="forget">저장 해제</button>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2>레이어</h2>
+    <div id="layers"></div>
+  </div>
+
+  <div class="sec">
+    <h2>구간</h2>
+    <div class="row">
+      <button class="btn" id="newseg">새 구간 <kbd>N</kbd></button>
+      <button class="btn" id="undo">점 취소 <kbd>U</kbd></button>
+    </div>
+    <button class="btn warn" id="clear">현재 레이어 비우기</button>
+    <p style="margin:0;font-size:11.5px;line-height:1.6;color:var(--dimmer)">
+      경계가 애매한 구간은 <b style="color:var(--dim)">찍지 말고 끊어라</b>.
+      억지로 이은 구간은 자동 추출보다 나쁘다.<br>
+      <b style="color:var(--dim)">다른 건물·다른 능선으로 넘어갈 때도 <kbd>N</kbd></b> —
+      안 끊으면 앞 대상과 한 선으로 이어져 판정이 틀어진다.</p>
+  </div>
+
+  <div class="sec">
+    <h2>참조선 (자동 추출 결과)</h2>
+    <label class="check"><input type="checkbox" id="rSky" checked> 스카이라인 — 정합에 쓴 선</label>
+    <label class="check"><input type="checkbox" id="rBright" checked> 운무선 · 밝기 기준</label>
+    <label class="check"><input type="checkbox" id="rBoth"> 운무선 · 밝기+붓질</label>
+    <label class="check"><input type="checkbox" id="rTex"> 운무선 · 붓질 기준 <span style="color:var(--seal)">(실패)</span></label>
+  </div>
+
+  <div class="sec">
+    <h2>조작</h2>
+    <div class="keys">
+      <kbd>클릭</kbd><span>점 추가</span>
+      <kbd>우클릭</kbd><span>마지막 점 취소</span>
+      <kbd>휠</kbd><span>상하 이동</span>
+      <kbd>가로휠</kbd><span>좌우 이동</span>
+      <kbd>Shift+휠</kbd><span>좌우 이동 (휠 하나짜리 마우스)</span>
+      <kbd>Ctrl+휠</kbd><span>확대 · 축소</span>
+      <kbd>+ / −</kbd><span>확대 · 축소</span>
+      <kbd>Space+드래그</kbd><span>이동</span>
+      <kbd>1</kbd>–<span>6 레이어 전환</span>
+      <kbd>F</kbd><span>전체 보기</span>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2>내보내기</h2>
+    <textarea id="out" readonly spellcheck="false"></textarea>
+    <div class="row">
+      <button class="btn" id="copy">JSON 복사</button>
+      <button class="btn" id="reload">저장본 불러오기</button>
+    </div>
+  </div>
+</aside>
+
+<main>
+  <div id="stage">
+    <canvas id="cv"></canvas>
+    <canvas id="loupe" width="150" height="150"></canvas>
+    <div id="drop">
+      <div class="inner">
+        <h2>원화를 올려주세요</h2>
+        <p>프로젝트 폴더의 <span class="num">PICs/inwangjesaekdo.jpg</span> (3000×1715).
+           <b style="color:var(--paper)">한 번만 열면 이 브라우저에 보관되어 다음부터는 바로 이어서 작업합니다.</b>
+           이미지는 브라우저 밖으로 나가지 않고, 서버에는 채집한 좌표만 저장됩니다.</p>
+        <label>파일 선택<input type="file" id="file" accept="image/*"></label>
+        <div class="hint">캔버스에 끌어다 놓아도 됩니다</div>
+      </div>
+    </div>
+  </div>
+  <div class="status">
+    <div class="cell"><b>픽셀</b><span class="num" id="sPix">—</span></div>
+    <div class="cell"><b>방위각</b><span class="num" id="sAz">—</span></div>
+    <div class="cell"><b>앙각</b><span class="num" id="sEl">—</span></div>
+    <div class="cell"><b>배율</b><span class="num" id="sZoom">—</span>
+      <span class="zoomer">
+        <button id="zout" title="축소 (−)">−</button>
+        <button id="zin"  title="확대 (+)">+</button>
+        <button id="zfit" title="전체 보기 (F)">맞춤</button>
+      </span></div>
+    <div class="cell"><b>구간</b><span class="num" id="sSeg">—</span></div>
+    <div class="cell spacer"><b>점</b><span class="num" id="sCount">0</span></div>
+    <div class="save" id="sSave">이미지 대기 중</div>
+  </div>
+</main>
+
+<script>
+const REFS = {"width":3000,"height":1715,"step":10,"skyline":[475.0,477.0,473.0,465.0,461.0,443.0,410.0,402.0,389.0,382.0,372.0,369.0,363.0,359.0,356.0,355.0,353.0,337.0,323.0,316.0,311.0,305.0,299.0,293.0,288.0,286.0,286.0,287.0,289.0,291.0,292.0,294.0,298.0,305.0,336.0,338.0,341.0,343.0,345.0,347.0,351.0,376.0,382.0,414.0,415.0,403.0,403.0,403.0,402.0,400.0,401.0,490.0,517.0,529.0,530.0,458.0,460.9,457.0,446.0,464.0,467.0,400.0,414.0,416.0,411.0,404.0,393.0,387.0,383.0,380.0,378.0,373.0,334.0,324.0,317.0,314.0,313.0,318.0,317.0,308.0,298.0,287.0,277.0,263.0,253.0,240.0,230.0,220.0,208.0,194.0,183.0,172.0,163.0,154.0,145.0,137.0,128.0,121.0,113.0,106.0,99.0,87.0,81.0,77.0,70.0,60.0,53.0,48.0,44.0,37.0,33.0,29.0,25.0,23.0,19.0,15.0,14.0,10.0,4.0,3.0,2.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,5.0,16.0,76.0,85.0,100.0,114.0,129.0,142.0,155.0,158.0,152.0,156.0,160.0,171.0,184.0,227.0,222.0,195.0,191.0,192.0,185.0,184.0,178.0,171.0,166.0,164.0,155.0,148.0,145.0,146.0,147.0,148.0,144.0,131.0,121.0,106.0,97.0,102.0,114.0,134.0,142.0,144.0,140.0,100.0,86.0,76.0,71.0,63.0,50.0,45.0,38.0,36.0,36.0,36.0,33.0,37.0,37.0,42.0,50.0,155.0,120.0,120.0,121.0,126.0,119.0,120.0,121.0,128.0,132.0,156.0,162.0,126.0,138.0,141.0,135.0,130.0,126.0,122.0,118.0,101.0,100.0,101.0,113.0,112.0,112.0,113.0,115.0,118.0,122.0,126.0,132.0,140.0,148.0,159.0,172.0,186.0,204.0,226.0,262.0,270.0,269.0,273.0,332.0,323.0,326.0,295.0,292.0,293.0,284.0,284.0,286.0,290.0,311.0,314.0,369.0,357.0,358.0,364.0,394.0,462.0,463.0,481.0,494.0,518.3,601.7,685.0,686.1,686.4,676.0,669.0,626.0,621.0,613.5,613.0,604.0,598.0,597.0,593.0,589.0,590.0,591.0,589.0,577.0,573.0,573.0,573.0,572.0,566.0],"fog_bright":[853.0,853.0,854.0,860.0,877.0,881.0,891.0,928.0,939.0,942.0,942.0,942.0,941.0,916.2,863.1,863.1,863.1,863.1,863.1,891.1,919.1,941.4,941.4,941.4,941.4,939.0,933.0,915.0,896.0,884.0,875.0,866.0,859.0,852.0,845.0,845.0,845.0,845.0,845.1,845.7,846.3,846.9,847.2,847.7,848.3,848.8,922.5,1093.0,1093.0,1093.0,1093.0,1090.0,1088.0,1087.0,1083.0,1082.0,1081.0,1082.0,1082.0,1083.0,1086.0,1091.0,1094.0,1097.0,1099.0,1102.0,1103.0,1104.0,1105.0,1107.0,1109.0,1112.0,1115.0,1117.0,1117.0,1116.0,1115.0,1109.0,1098.0,1094.0,1092.0,1090.0,1087.0,1083.0,1079.0,1044.0,1013.0,1009.0,1003.0,995.0,986.2,984.8,982.4,980.8,977.4,971.0,962.8,957.6,952.4,947.2,942.6,932.0,926.0,923.0,915.0,907.0,905.0,902.0,901.0,900.0,900.0,900.0,901.0,916.0,917.0,919.0,920.0,919.0,917.0,915.0,901.0,895.0,883.0,882.0,875.0,870.0,869.0,869.0,868.0,868.0,863.0,861.0,858.0,857.0,856.0,856.0,856.0,858.0,860.0,863.0,865.0,866.0,869.0,870.0,878.0,883.0,892.0,902.0,911.0,914.7,916.0,918.0,919.0,921.0,922.0,923.0,923.0,923.0,923.0,923.0,922.0,922.0,921.0,920.0,918.0,917.0,915.0,914.0,907.0,902.0,895.0,892.0,890.0,887.0,882.0,881.0,879.0,877.0,875.0,871.0,870.0,870.0,867.4,865.0,863.0,860.0,856.0,842.2,828.2,814.2,800.3,786.3,772.3,758.3,744.3,730.3,716.3,702.3,688.3,674.3,660.3,646.3,632.4,618.4,604.4,593.2,591.8,591.8,591.8,643.5,701.0,702.0,702.0,701.0,694.0,686.0,676.0,670.0,653.0,650.0,650.0,649.0,648.0,646.0,645.0,644.0,644.0,641.0,634.4,621.4,605.2,593.1,586.8,581.0,575.0,570.0,565.0,554.8,554.8,556.1,558.1,561.0,566.0,572.5,579.1,585.7,592.2,598.8,605.4,611.9,618.5,625.1,631.6,638.2,642.8,646.1,650.0,709.4,830.6,880.0,881.0,881.0,881.0,881.0,881.0,879.0,878.0,872.0,868.0,841.7,813.5,801.0,793.8,782.0,782.0,782.0,782.0,784.0,787.0,791.0,798.0,807.0,810.0,819.0,840.0,856.0,877.0,881.0,887.0,891.0,893.0,899.0,902.0,910.0,917.0,928.0,933.0,945.0,949.0,949.0],"fog_texture":[775.0,775.0,775.0,607.0,519.0,486.0,459.0,446.0,441.0,441.0,429.0,422.0,413.0,412.0,412.0,408.0,408.0,408.0,408.0,408.0,406.0,386.8,376.9,371.6,366.3,361.0,355.8,350.5,347.8,347.8,347.8,347.8,444.2,557.1,658.8,771.7,783.0,783.0,842.0,844.0,844.0,845.0,872.3,872.3,558.0,558.0,558.0,558.0,712.0,1044.0,1069.0,1142.0,1148.0,1150.0,1150.0,1150.0,1148.0,1148.0,1147.0,930.0,930.0,930.0,930.0,923.0,923.0,923.0,876.2,766.0,728.0,728.0,726.0,726.0,534.0,534.0,360.0,359.0,358.0,357.0,356.0,348.0,338.0,327.0,317.0,303.0,293.0,280.0,270.0,260.0,248.0,234.0,223.0,220.0,216.0,194.0,185.0,177.0,168.0,161.0,153.0,146.0,139.0,127.0,121.0,117.0,110.0,100.0,93.0,88.0,84.0,77.0,73.0,69.0,65.0,63.0,59.0,55.0,54.0,50.0,44.0,44.0,43.0,43.0,42.0,40.0,40.0,40.0,43.0,43.0,73.0,81.0,82.0,82.0,82.0,81.0,81.0,86.0,86.0,86.0,88.0,112.0,246.0,255.0,269.0,269.0,269.0,269.0,255.0,127.0,124.0,92.0,91.0,92.0,98.0,122.0,128.0,131.0,140.0,156.0,175.0,177.8,180.5,183.0,184.7,187.5,190.3,193.0,195.8,198.6,201.4,204.1,206.9,209.7,210.8,212.2,214.1,216.3,218.0,237.7,258.9,261.1,261.1,261.1,261.1,188.0,184.0,171.0,161.0,160.0,160.0,160.0,160.0,287.0,464.1,490.4,490.4,490.4,490.4,352.1,257.6,257.6,257.6,257.6,294.8,343.0,346.0,350.0,352.0,352.0,353.0,359.0,378.0,388.0,423.0,437.0,452.0,559.1,632.6,559.1,559.1,639.1,639.1,639.1,639.1,532.1,436.9,401.3,322.0,317.3,315.0,315.0,316.0,318.1,322.0,322.0,322.0,322.0,161.0,161.0,161.0,161.0,162.0,166.0,172.0,180.0,188.0,199.0,212.0,366.2,482.7,482.7,483.2,508.0,518.0,518.0,518.0,518.0,518.0,518.0,518.0,518.0,393.0,392.0,391.0,391.0,391.0,391.0,823.0,823.0,823.0,823.0,823.0,823.0,822.0,819.0,819.0,819.0,819.0,823.0,915.0,911.0,915.0,915.0,916.0,916.0,911.0,900.0,900.0,857.0,899.0,900.0,900.0,911.0,914.0,926.0,930.0,930.0,938.0,946.0,930.0,928.0],"fog_both":[867.0,867.0,867.0,1046.0,1046.0,1046.0,1046.0,1042.0,1034.0,1031.0,1029.0,1029.0,1032.0,1034.0,1200.0,1215.0,1226.0,1226.0,1231.0,1230.0,1224.0,1220.0,1218.0,1217.0,1216.0,1214.0,1212.0,1211.0,1211.0,1211.0,1209.0,1208.0,1203.1,1197.4,1191.8,1186.2,1182.3,1182.3,1182.1,1181.5,1181.1,1181.7,1182.4,1182.6,1184.0,1180.0,1176.0,1161.0,1155.4,1153.8,1150.0,1144.0,1139.0,1138.0,1138.0,1139.0,1138.0,1138.0,1139.0,1142.0,1142.0,1139.0,1141.0,1156.0,1157.0,1086.0,1079.0,1079.0,1083.0,1084.0,1083.2,1081.1,1079.1,1079.0,1076.0,1072.7,1068.3,1064.0,1063.5,1063.5,1063.5,1073.0,1108.0,1108.0,1108.0,1108.0,1100.0,1080.0,1077.0,1024.0,1019.0,1013.0,1011.0,1006.0,1004.0,1002.0,1001.0,994.4,973.0,955.0,941.0,940.0,941.0,952.0,947.0,940.0,939.0,939.0,928.0,928.0,928.0,928.0,930.0,930.0,930.0,930.0,928.0,925.7,924.4,923.2,922.1,921.3,921.3,921.1,920.2,916.0,912.0,909.0,909.0,903.2,894.2,885.3,877.0,876.0,876.0,876.0,876.0,881.0,891.5,903.4,915.2,927.1,939.0,950.9,962.8,974.6,986.5,998.4,1010.2,1022.1,1025.0,1025.0,1026.0,1026.0,1025.0,1023.0,1023.0,1023.0,1023.0,1023.4,1023.2,1022.7,1022.3,1020.0,953.0,952.0,952.0,952.0,951.0,952.0,954.0,953.0,952.0,952.0,949.0,933.1,914.4,895.7,891.0,891.0,891.0,891.0,896.5,906.8,917.1,927.3,937.6,947.9,958.2,968.5,978.8,989.0,999.3,1009.6,1019.9,1030.2,1040.4,1050.7,1061.0,1071.3,1081.6,1091.8,1102.1,1112.4,1122.7,1133.0,1143.2,1153.5,1163.8,1174.1,1184.4,1194.7,1204.9,1215.2,1225.5,1235.8,1239.0,1241.7,1243.5,1243.5,1243.1,1243.1,1229.0,1229.0,1229.0,1229.0,1224.8,1219.0,1219.0,1219.0,1219.0,1127.7,1030.5,933.3,836.2,824.9,824.9,824.9,824.9,924.7,1049.4,1174.1,1225.0,1235.0,1247.1,1247.1,1247.1,1247.1,1246.8,1246.0,1245.1,1240.0,1229.3,1209.3,1176.0,1142.7,1109.3,1076.0,1042.7,1009.3,976.0,942.7,909.3,897.4,897.0,897.0,896.0,896.0,896.0,828.0,823.0,821.0,819.0,819.0,818.0,818.0,818.0,819.0,822.0,904.0,904.0,904.0,904.0,896.0,894.0,894.0,894.0,894.0,895.0,900.0,904.0,910.0,913.0,925.0,928.0,935.0,940.0,944.0,943.0,939.0]};
+// 정합 카메라 (best_fit.json)
+const CAM = {f:3621.3, ppx:1500, ppy:1526.3, az0:288.93, W:3000, H:1715};
+
+const LAYERS = [
+  {id:"fog",   name:"운무 상단선", type:"polyline", color:"var(--l1)", raw:"#4FB3D9",
+   hint:"산자락이 안개에 잠기는 경계"},
+  {id:"ridge", name:"내부 능선",   type:"polyline", color:"var(--l2)", raw:"#E08A3C",
+   hint:"앞 능선이 뒤를 가리는 실루엣"},
+  {id:"roof",  name:"기와집 지붕선", type:"segments", color:"var(--l3)", raw:"#E0479E",
+   hint:"용마루·추녀 — 소실점용"},
+  {id:"tree",  name:"나무 밑동",   type:"points",   color:"var(--l4)", raw:"#6FBF73",
+   hint:"소나무가 지면에 닿는 점"},
+  {id:"post",  name:"기둥 · 수직선", type:"segments", color:"var(--l5)", raw:"#B79CE8",
+   pair:true, hint:"기둥 위→아래 2점 — 2점마다 자동으로 끊김"},
+  {id:"th",    name:"나무 높이",     type:"segments", color:"var(--l6)", raw:"#E8D24F",
+   pair:true, hint:"밑동 → 꼭대기 2점 — 실제 높이(m) 산출용"}
+];
+const state = {
+  img:null, imgW:0, imgH:0, imgName:"",
+  scale:1, ox:0, oy:0, active:"fog",
+  data:Object.fromEntries(LAYERS.map(l=>[l.id,{segments:[[]]}])),
+  refs:{rSky:true,rBright:true,rBoth:false,rTex:false},
+  mouse:null, panning:false, spacedown:false, dirty:false
+};
+const cv=document.getElementById("cv"), ctx=cv.getContext("2d");
+const loupe=document.getElementById("loupe"), lctx=loupe.getContext("2d");
+const $=id=>document.getElementById(id);
+
+/* ---------- layers rail ---------- */
+function renderLayers(){
+  const box=$("layers"); box.innerHTML="";
+  LAYERS.forEach((l,i)=>{
+    const S=state.data[l.id].segments;
+    const n=S.reduce((a,s)=>a+s.length,0);
+    const ns=S.filter(s=>s.length).length;
+    const b=document.createElement("button");
+    b.className="layer"; b.setAttribute("aria-pressed", state.active===l.id);
+    b.innerHTML=`<span class="swatch" style="background:${l.raw}"></span>
+      <span><span class="nm">${l.name}</span><span class="ty">${l.hint}</span></span>
+      <span class="ct num">${ns?ns+"·":""}${n}</span>`;
+    b.onclick=()=>{state.active=l.id;renderLayers();draw();};
+    box.appendChild(b);
+  });
+  const S=state.data[state.active].segments;
+  $("sCount").textContent = S.reduce((a,s)=>a+s.length,0);
+  $("sSeg").textContent = `${S.filter(s=>s.length).length}개 · 현재 ${S[S.length-1].length}점`;
+}
+
+/* ---------- view ---------- */
+function fit(){
+  if(!state.img) return;
+  const r=cv.getBoundingClientRect();
+  const s=Math.min(r.width/state.imgW, r.height/state.imgH)*0.94;
+  state.scale=s; state.ox=(r.width-state.imgW*s)/2; state.oy=(r.height-state.imgH*s)/2;
+}
+const toImg=(px,py)=>[(px-state.ox)/state.scale,(py-state.oy)/state.scale];
+const toScr=(ix,iy)=>[ix*state.scale+state.ox, iy*state.scale+state.oy];
+
+function resize(){
+  const r=cv.getBoundingClientRect(), d=window.devicePixelRatio||1;
+  cv.width=Math.round(r.width*d); cv.height=Math.round(r.height*d);
+  ctx.setTransform(d,0,0,d,0,0); draw();
+}
+new ResizeObserver(resize).observe(document.getElementById("stage"));
+
+/* ---------- draw ---------- */
+function refPath(arr,color,dash){
+  const sc=state.imgW/REFS.width;
+  ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=1.4; ctx.setLineDash(dash||[]);
+  ctx.globalAlpha=.62; ctx.beginPath();
+  arr.forEach((y,i)=>{
+    const [sx,sy]=toScr(i*REFS.step*sc, y*sc);
+    i?ctx.lineTo(sx,sy):ctx.moveTo(sx,sy);
+  });
+  ctx.stroke(); ctx.restore();
+}
+function draw(){
+  const r=cv.getBoundingClientRect();
+  ctx.clearRect(0,0,r.width,r.height);
+  if(!state.img) return;
+  ctx.imageSmoothingQuality="high";
+  ctx.drawImage(state.img, state.ox, state.oy, state.imgW*state.scale, state.imgH*state.scale);
+
+  if(state.refs.rSky)    refPath(REFS.skyline,"#8E8477",[6,4]);
+  if(state.refs.rBright) refPath(REFS.fog_bright,"#4FB3D9",[6,4]);
+  if(state.refs.rBoth)   refPath(REFS.fog_both,"#E0479E",[3,4]);
+  if(state.refs.rTex)    refPath(REFS.fog_texture,"#C8442E",[2,5]);
+
+  LAYERS.forEach(l=>{
+    const on = l.id===state.active;
+    const segs = state.data[l.id].segments;
+    ctx.save();
+    ctx.globalAlpha = on?1:.4;
+    ctx.strokeStyle=l.raw; ctx.fillStyle=l.raw; ctx.lineWidth=on?2.2:1.4;
+    ctx.lineJoin="round"; ctx.lineCap="round";
+    segs.forEach(seg=>{
+      if(l.type!=="points" && seg.length>1){
+        ctx.beginPath();
+        seg.forEach((p,i)=>{const[a,b]=toScr(p[0],p[1]); i?ctx.lineTo(a,b):ctx.moveTo(a,b);});
+        ctx.stroke();
+      }
+      seg.forEach((p,i)=>{
+        const[a,b]=toScr(p[0],p[1]);
+        ctx.beginPath(); ctx.arc(a,b, on?3.4:2.2, 0, 6.284); ctx.fill();
+        if(on){ ctx.save(); ctx.strokeStyle="rgba(20,18,16,.85)"; ctx.lineWidth=1; ctx.stroke(); ctx.restore(); }
+      });
+    });
+    ctx.restore();
+  });
+}
+
+/* ---------- loupe ---------- */
+function drawLoupe(px,py){
+  if(!state.img){loupe.style.display="none";return;}
+  const Z=5, S=150;
+  const [ix,iy]=toImg(px,py);
+  lctx.save(); lctx.clearRect(0,0,S,S);
+  lctx.beginPath(); lctx.arc(S/2,S/2,S/2-1,0,6.284); lctx.clip();
+  lctx.fillStyle="#1C1916"; lctx.fillRect(0,0,S,S);
+  lctx.imageSmoothingEnabled=false;
+  const half=S/(2*Z);
+  lctx.drawImage(state.img, ix-half, iy-half, 2*half, 2*half, 0,0,S,S);
+  const L=LAYERS.find(l=>l.id===state.active);
+  const seg=curSeg();
+  if(seg.length){
+    lctx.strokeStyle=L.raw; lctx.lineWidth=2; lctx.beginPath();
+    seg.forEach((p,i)=>{const a=(p[0]-ix)*Z+S/2, b=(p[1]-iy)*Z+S/2; i?lctx.lineTo(a,b):lctx.moveTo(a,b);});
+    lctx.stroke();
+  }
+  lctx.strokeStyle="rgba(233,224,206,.9)"; lctx.lineWidth=1;
+  lctx.beginPath(); lctx.moveTo(S/2-11,S/2); lctx.lineTo(S/2-3,S/2);
+  lctx.moveTo(S/2+3,S/2); lctx.lineTo(S/2+11,S/2);
+  lctx.moveTo(S/2,S/2-11); lctx.lineTo(S/2,S/2-3);
+  lctx.moveTo(S/2,S/2+3); lctx.lineTo(S/2,S/2+11); lctx.stroke();
+  lctx.restore();
+  const r=cv.getBoundingClientRect();
+  loupe.style.display="block";
+  loupe.style.left=Math.min(px+22, r.width-S-8)+"px";
+  loupe.style.top=Math.max(8, py-S-22)+"px";
+}
+
+/* ---------- camera readout ---------- */
+function angles(ix,iy){
+  const sc=CAM.W/state.imgW;
+  const dx=ix*sc-CAM.ppx, dy=CAM.ppy-iy*sc;
+  const az=(CAM.az0+Math.atan2(dx,CAM.f)*180/Math.PI+360)%360;
+  const el=Math.atan2(dy,Math.hypot(dx,CAM.f))*180/Math.PI;
+  return [az,el];
+}
+
+/* ---------- editing ---------- */
+const curSeg=()=>{const s=state.data[state.active].segments; return s[s.length-1];};
+function addPoint(ix,iy){
+  if(ix<0||iy<0||ix>state.imgW||iy>state.imgH) return;
+  const L=LAYERS.find(l=>l.id===state.active);
+  curSeg().push([Math.round(ix*10)/10, Math.round(iy*10)/10]);
+  if(L.pair && curSeg().length>=2) state.data[state.active].segments.push([]);
+  touched();
+}
+function undo(){
+  const s=state.data[state.active].segments;
+  if(s[s.length-1].length) s[s.length-1].pop();
+  else if(s.length>1){ s.pop(); s[s.length-1].pop(); }
+  touched();
+}
+function newSeg(){
+  const s=state.data[state.active].segments;
+  if(s[s.length-1].length) s.push([]);
+  touched();
+}
+function touched(){ state.dirty=true; renderLayers(); draw(); writeOut(); scheduleSave(); }
+
+function writeOut(){
+  const o={artifact:"inwangjesaekdo", image:{name:state.imgName,w:state.imgW,h:state.imgH},
+    camera:CAM, layers:{}};
+  LAYERS.forEach(l=>{
+    o.layers[l.id]={name:l.name,type:l.type,
+      segments:state.data[l.id].segments.filter(s=>s.length)};
+  });
+  $("out").value=JSON.stringify(o);
+  return o;
+}
+
+/* ---------- pointer ---------- */
+cv.addEventListener("pointermove",e=>{
+  const r=cv.getBoundingClientRect(), px=e.clientX-r.left, py=e.clientY-r.top;
+  if(state.panning && state.mouse){
+    state.ox+=px-state.mouse[0]; state.oy+=py-state.mouse[1];
+    state.mouse=[px,py]; draw(); return;
+  }
+  state.mouse=[px,py];
+  if(!state.img) return;
+  const [ix,iy]=toImg(px,py);
+  $("sPix").textContent=`${Math.round(ix)}, ${Math.round(iy)}`;
+  const [az,el]=angles(ix,iy);
+  $("sAz").textContent=az.toFixed(2)+"°"; $("sEl").textContent=(el>=0?"+":"")+el.toFixed(2)+"°";
+  drawLoupe(px,py);
+});
+cv.addEventListener("pointerleave",()=>{loupe.style.display="none";});
+cv.addEventListener("pointerdown",e=>{
+  const r=cv.getBoundingClientRect(), px=e.clientX-r.left, py=e.clientY-r.top;
+  if(e.button===1 || state.spacedown){ state.panning=true; state.mouse=[px,py]; cv.setPointerCapture(e.pointerId); return; }
+  if(e.button===2) return;
+  if(!state.img) return;
+  const [ix,iy]=toImg(px,py); addPoint(ix,iy); drawLoupe(px,py);
+});
+cv.addEventListener("pointerup",e=>{ state.panning=false; try{cv.releasePointerCapture(e.pointerId);}catch(_){} });
+cv.addEventListener("contextmenu",e=>{e.preventDefault(); undo();});
+function wheelDelta(e){
+  const m = e.deltaMode===1 ? 16 : e.deltaMode===2 ? cv.clientHeight : 1;
+  return [e.deltaX*m, e.deltaY*m];
+}
+function zoomAt(px,py,k){
+  const [ix,iy]=toImg(px,py);
+  state.scale=Math.max(0.05,Math.min(24,state.scale*k));
+  state.ox=px-ix*state.scale; state.oy=py-iy*state.scale;
+  $("sZoom").textContent=(state.scale*100).toFixed(0)+"%";
+}
+cv.addEventListener("wheel",e=>{
+  if(!state.img) return;
+  e.preventDefault();
+  const r=cv.getBoundingClientRect(), px=e.clientX-r.left, py=e.clientY-r.top;
+  let [dx,dy]=wheelDelta(e);
+  if(e.ctrlKey||e.metaKey){                 // Ctrl/⌘ + 휠 = 확대·축소
+    zoomAt(px,py,Math.exp(-dy*0.0016));
+  }else{
+    if(e.shiftKey && !dx){ dx=dy; dy=0; }   // Shift + 세로휠 = 좌우 이동
+    state.ox-=dx; state.oy-=dy;             // 가로휠(deltaX)·세로휠 그대로 이동
+  }
+  draw(); drawLoupe(px,py);
+},{passive:false});
+
+addEventListener("keydown",e=>{
+  if(e.target.tagName==="TEXTAREA"||e.target.tagName==="INPUT") return;
+  if(e.code==="Space"){state.spacedown=true;cv.classList.add("pan");e.preventDefault();return;}
+  const k=e.key.toLowerCase();
+  if(k==="n"){newSeg();} else if(k==="u"||e.key==="Backspace"){e.preventDefault();undo();}
+  else if(k==="f"){fit();$("sZoom").textContent=(state.scale*100).toFixed(0)+"%";draw();}
+  else if(k==="s"){e.preventDefault();saveNow();}
+  else if(e.key==="+"||e.key==="="){e.preventDefault();zoomCenter(1.25);}
+  else if(e.key==="-"||e.key==="_"){e.preventDefault();zoomCenter(0.8);}
+  else if("123456".includes(k)){state.active=LAYERS[+k-1].id;renderLayers();draw();}
+});
+addEventListener("keyup",e=>{ if(e.code==="Space"){state.spacedown=false;cv.classList.remove("pan");} });
+
+/* ---------- image load & 브라우저 보관 ---------- */
+const IDB={
+  open(){return new Promise((res,rej)=>{
+    const r=indexedDB.open("inwang-annot",1);
+    r.onupgradeneeded=()=>r.result.createObjectStore("files");
+    r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error);});},
+  async put(k,v){const db=await IDB.open();return new Promise((res,rej)=>{
+    const tx=db.transaction("files","readwrite");tx.objectStore("files").put(v,k);
+    tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error);});},
+  async get(k){const db=await IDB.open();return new Promise((res,rej)=>{
+    const tx=db.transaction("files","readonly");const q=tx.objectStore("files").get(k);
+    q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error);});},
+  async del(k){const db=await IDB.open();return new Promise(res=>{
+    const tx=db.transaction("files","readwrite");tx.objectStore("files").delete(k);
+    tx.oncomplete=()=>res();tx.onerror=()=>res();});}
+};
+function showImgCard(kept){
+  $("imgSec").hidden=false;
+  $("imgName").textContent=state.imgName;
+  $("imgMeta").textContent=`${state.imgW}×${state.imgH}` + (kept?" · 이 브라우저에 보관됨":" · 보관 실패, 새로고침 시 다시 열어야 함");
+}
+function useImage(blob, persist=true, name){
+  const img=new Image();
+  img.onload=async()=>{
+    state.img=img; state.imgW=img.naturalWidth; state.imgH=img.naturalHeight;
+    state.imgName=name||blob.name||"image";
+    $("drop").style.display="none";
+    fit(); $("sZoom").textContent=(state.scale*100).toFixed(0)+"%";
+    setSave(state.dbReady?"저장 준비됨":"로컬 전용");
+    draw(); writeOut();
+    let kept=!persist;
+    if(persist){
+      try{ await IDB.put("painting",{blob,name:state.imgName}); kept=true; }catch(_){ kept=false; }
+    }
+    showImgCard(kept);
+  };
+  img.src=URL.createObjectURL(blob);
+}
+$("file").addEventListener("change",e=>{ if(e.target.files[0]) useImage(e.target.files[0]); });
+$("file2").addEventListener("change",e=>{ if(e.target.files[0]) useImage(e.target.files[0]); });
+$("forget").onclick=async()=>{
+  if(!confirm("보관한 원화를 지웁니다. 채집한 좌표는 그대로 남습니다.")) return;
+  try{ await IDB.del("painting"); }catch(_){}
+  $("imgMeta").textContent=`${state.imgW}×${state.imgH} · 보관 해제됨`;
+};
+["dragover","drop"].forEach(t=>document.addEventListener(t,e=>e.preventDefault()));
+document.addEventListener("drop",e=>{ const f=e.dataTransfer?.files?.[0]; if(f) useImage(f); });
+
+/* ---------- buttons ---------- */
+function zoomCenter(k){
+  if(!state.img) return;
+  const r=cv.getBoundingClientRect();
+  const p=state.mouse||[r.width/2,r.height/2];
+  zoomAt(p[0],p[1],k); draw();
+}
+$("zin").onclick=()=>zoomCenter(1.25);
+$("zout").onclick=()=>zoomCenter(0.8);
+$("zfit").onclick=()=>{fit();$("sZoom").textContent=(state.scale*100).toFixed(0)+"%";draw();};
+$("newseg").onclick=newSeg; $("undo").onclick=undo;
+$("clear").onclick=()=>{
+  const L=LAYERS.find(l=>l.id===state.active);
+  if(confirm(`'${L.name}' 레이어의 점을 모두 지웁니다.`)){
+    state.data[state.active]={segments:[[]]}; touched();
+  }
+};
+$("copy").onclick=async()=>{
+  writeOut();
+  try{ await navigator.clipboard.writeText($("out").value); $("copy").textContent="복사됨"; }
+  catch(_){ $("out").select(); $("copy").textContent="선택됨 — Ctrl+C"; }
+  setTimeout(()=>$("copy").textContent="JSON 복사",1600);
+};
+["rSky","rBright","rBoth","rTex"].forEach(id=>{
+  $(id).onchange=e=>{state.refs[id]=e.target.checked;draw();};
+});
+
+/* ---------- persistence ---------- */
+let db=null, saveTimer=null;
+function setSave(t,cls){ const el=$("sSave"); el.textContent=t; el.className="save"+(cls?" "+cls:""); }
+function scheduleSave(){
+  if(!db) return;
+  clearTimeout(saveTimer); setSave("저장 대기…");
+  saveTimer=setTimeout(saveNow,1400);
+}
+async function saveNow(){
+  if(!db){ setSave("로컬 전용 — JSON을 복사해 두세요"); return; }
+  try{
+    const o=writeOut(); o.updatedAt=new Date().toISOString();
+    await db.doc("annotations/inwangjesaekdo").set(o);
+    state.dirty=false; setSave("저장됨 "+new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit"}),"on");
+  }catch(err){ setSave("저장 실패 — JSON 복사로 보관하세요","err"); }
+}
+$("reload").onclick=async()=>{
+  if(!db){ alert("저장소를 쓸 수 없는 화면입니다. JSON 복사를 사용하세요."); return; }
+  try{
+    const s=await db.doc("annotations/inwangjesaekdo").get();
+    if(!s.exists){ setSave("저장본 없음"); return; }
+    const o=s.data();
+    LAYERS.forEach(l=>{
+      const segs=o.layers?.[l.id]?.segments;
+      state.data[l.id]={segments: (segs&&segs.length)?segs.map(a=>a.slice()):[[]]};
+      if(!state.data[l.id].segments.length) state.data[l.id].segments=[[]];
+    });
+    renderLayers(); draw(); writeOut(); setSave("불러왔습니다","on");
+  }catch(err){ setSave("불러오기 실패","err"); }
+};
+addEventListener("beforeunload",e=>{ if(state.dirty){e.preventDefault();e.returnValue="";} });
+
+(async()=>{
+  try{
+    const rec=await IDB.get("painting");
+    if(rec&&rec.blob) useImage(rec.blob,false,rec.name);
+  }catch(_){}
+  try{ db=await window.claude?.use?.("db"); }catch(_){ db=null; }
+  state.dbReady=!!db;
+  if(db){ setSave(state.img?"저장 준비됨":"이미지 대기 중"); $("reload").click(); }
+  else { setSave("로컬 전용 — JSON을 복사해 두세요"); }
+})();
+
+renderLayers(); writeOut(); resize();
+</script>

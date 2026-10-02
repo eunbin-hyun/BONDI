@@ -1,0 +1,16 @@
+{
+  "half_width_m": 1250.0,
+  "depth_m": 2600.0,
+  "back_m": 250.0,
+  "uv_note": "u = (Xc + HALF_W)/(2*HALF_W), v = (Zc + BACK)/(DEPTH + BACK)  (Xc = 메시 X, Zc = -메시 Z). 감면 후에도 정점 좌표로 재계산 가능",
+  "geo_highpass_m": 26.0,
+  "ink_amp_m": 2.2,
+  "micro_amp_m": 0.85,
+  "micro_note": "절차적 프랙탈 잔결. 측정값이 아니라 조형적 추가 (수치지형도가 평탄화한 전경이 유리처럼 매끈해 보이는 것을 막는 용도)",
+  "grazing": {
+    "stretch_ok": 5.0,
+    "stretch_cut": 13.0,
+    "note": "화소 신축이 이 배율을 넘는 구역은 원화를 선명 투영하지 않고 흐린 톤 + 지형 음영으로 대체"
+  },
+  "res": 2048
+}

@@ -1,0 +1,59 @@
+현재 레벨: /Game/Museum/Levels/L_Room_A
+프로젝트 레벨 목록: ['/Game/Museum/Levels/L_Inwang', '/Game/Museum/Levels/L_Room_A', '/Game/Museum/Levels/L_Room_B', '/Game/Museum/Levels/L_Room_C', '/Game/Stylized_Tree_Pack/Maps/Overview', '/Game/XRFramework/Levels/L_Museum', '/Game/XRFramework/Levels/L_XRTemplate', '/Game/XRFramework/Levels/L_XRTemplate_Lighting']
+조사 대상: /Game/Museum/Levels/L_Room_A
+load_level → True
+======================================================================
+액터 38개
+클래스별: {'StaticMeshActor': 12, 'Actor': 7, 'PointLight': 6, 'SpotLight': 3, 'SphereReflectionCapture': 3, 'InstancedFoliageActor': 1, 'BP_StageToggle_C': 1, 'BP_Portal_C': 1, 'DirectionalLight': 1, 'LightmassImportanceVolume': 1, 'SkyLight': 1, 'BP_Sky_Sphere_C': 1}
+스태틱 메시 전체 바운드: X -1638400~1638400  Y -1638400~1638400  Z -1638400~1638400 (cm)  → 방 크기 가늠
+----------------------------------------------------------------------
+스태틱 메시 6종 (개수 / 머티리얼 / 예시 라벨 / 크기 cm)
+   23 × /Engine/BasicShapes/Cube                                     ['/Game/Museum/Materials/MI_Lobby_Dark', '/Game/Museum/Materials/MI_RoomA_Cove', '/Game/Museum/Materials/MI_RoomA_Plinth']  예: Ceiling_Gallery  크기 (1040, 1100, 50)
+    8 × /Game/LevelPrototyping/Meshes/SM_Cube                        ['/Game/Museum/Materials/MI_RoomA_Earth', '/Game/Museum/Materials/MI_RoomA_Floor', '/Game/Museum/Materials/MI_RoomA_Wall']  예: Floor  크기 (1075, 1100, 50)
+    5 × /Engine/BasicShapes/Cylinder                                 ['/Game/Museum/Materials/MI_Button', '/Game/Museum/Materials/MI_RoomA_Earth', '/Game/Museum/Materials/MI_RoomA_Plinth', '/Game/Museum/Materials/MI_RoomA_Sand']  예: Pedestal_02  크기 (46, 46, 110)
+    1 × /Game/Museum/Artifacts/Pot_Damaged                           ['/Game/Museum/Materials/MI_Artifact_Clay_Damaged']  예: Artifact_BitsalPot  크기 (40, 40, 40)
+    1 × /Engine/BasicShapes/Plane                                    ['/Game/Museum/Levels/L_Room_A']  예: Portal_To_Hall  크기 (256, 256, 376)
+    1 × /Engine/EngineSky/SM_SkySphere                               ['/Game/XRFramework/Levels/L_XRTemplate_Lighting']  예: SkySphere  크기 (3276800, 3276800, 3276800)
+----------------------------------------------------------------------
+조명·하늘 13개
+  Spot_Exhibit_02                SpotLight                (-135, -95, 285) rot [-44, 35, 0]  intensity 210.0  color <Struct 'Color' (0x000002A9AE1320B8) {b: 184, g: 224, r: 255, a: 255}>  cast_shadows True
+  Fill_01                        PointLight               (-250, 0, 300) rot [0, 0, 0]  intensity 60.0  color <Struct 'Color' (0x000002A96953E8B8) {b: 179, g: 217, r: 255, a: 255}>  cast_shadows False
+  Fill_02                        PointLight               (250, 0, 300) rot [0, 0, 0]  intensity 60.0  color <Struct 'Color' (0x000002A96953FCB8) {b: 179, g: 217, r: 255, a: 255}>  cast_shadows False
+  Fill_03                        PointLight               (0, -400, 300) rot [0, 0, 0]  intensity 60.0  color <Struct 'Color' (0x000002A9695384B8) {b: 179, g: 217, r: 255, a: 255}>  cast_shadows False
+  Fill_04                        PointLight               (0, 400, 300) rot [0, 0, 0]  intensity 60.0  color <Struct 'Color' (0x000002A9695366B8) {b: 179, g: 217, r: 255, a: 255}>  cast_shadows False
+  Spot_Rim                       SpotLight                (95, 120, 210) rot [-29, -128, 0]  intensity 95.0  color <Struct 'Color' (0x000002A9AE13DEB8) {b: 255, g: 255, r: 255, a: 255}>  cast_shadows False
+  Spot_Button                    SpotLight                (-120, -45, 205) rot [-42, 21, 0]  intensity 38.0  color <Struct 'Color' (0x000002A9676CD9B8) {b: 255, g: 255, r: 255, a: 255}>  cast_shadows False
+  DirectionalLight               DirectionalLight         (100, -200, 570) rot [-38, 36, -50]  intensity 2.0  color <Struct 'Color' (0x000002A9AF869EB8) {b: 255, g: 255, r: 255, a: 255}>  cast_shadows True
+  LightmassImportanceVolume      LightmassImportanceVolume (500, 0, 120) rot [0, 0, 0]  
+  PointLight4                    PointLight               (1000, 0, 60) rot [0, 0, 0]  intensity 4.0  color <Struct 'Color' (0x000002A99A05CFB8) {b: 84, g: 181, r: 255, a: 255}>  cast_shadows True
+  PointLight5                    PointLight               (1447, 0, 102) rot [0, 0, 0]  intensity 0.5  color <Struct 'Color' (0x000002A99A05EDB8) {b: 84, g: 181, r: 255, a: 255}>  cast_shadows True
+  SkyLight                       SkyLight                 (21, -31, 505) rot [0, 0, 0]  intensity 1.0  color <Struct 'Color' (0x000002A9AD45C5B8) {b: 255, g: 255, r: 255, a: 255}>  cast_shadows True
+  SkySphere                      BP_Sky_Sphere_C          (0, 0, 0) rot [0, 0, 0]  
+----------------------------------------------------------------------
+볼륨 1개
+  LightmassImportanceVolume      LightmassImportanceVolume (500, 0, 120)
+----------------------------------------------------------------------
+PlayerStart 0개
+----------------------------------------------------------------------
+이름에 액자/그림/포털/벽/바닥 등이 들어간 액터 17개
+  Floor                              StaticMeshActor              폴더 None                 위치 (-550, -550, -50) 회전 [0, 0, 0] 스케일 [10.75, 11.0, 0.5]
+  Wall_0                             StaticMeshActor              폴더 None                 위치 (-500, -550, 0) 회전 [0, 0, 90] 스케일 [11.0, 0.5, 4.0]
+  Wall_4                             StaticMeshActor              폴더 None                 위치 (525, 100, 0) 회전 [0, 0, 90] 스케일 [4.0, 0.25, 4.0]
+  Wall_1                             StaticMeshActor              폴더 None                 위치 (-500, -550, 0) 회전 [0, 0, 0] 스케일 [10.25, 0.5, 4.0]
+  Wall_3                             StaticMeshActor              폴더 None                 위치 (-500, 500, 0) 회전 [0, 0, 0] 스케일 [10.25, 0.5, 4.0]
+  Wall_5                             StaticMeshActor              폴더 None                 위치 (525, -500, 0) 회전 [0, 0, 90] 스케일 [4.0, 0.25, 4.0]
+  Wall_6                             StaticMeshActor              폴더 None                 위치 (525, -100, 0) 회전 [0, 0, 90] 스케일 [2.0, 0.25, 4.0]
+  Pedestal_02                        StaticMeshActor              폴더 Museum/Pedestals     위치 (0, 0, 55) 회전 [0, 0, 0] 스케일 [0.46, 0.46, 1.1]
+  Spot_Exhibit_02                    SpotLight                    폴더 Museum/Lighting      위치 (-135, -95, 285) 회전 [0, -44, 35] 스케일 [1.0, 1.0, 1.0]
+  Ceiling_Gallery                    StaticMeshActor              폴더 Museum/Structure     위치 (-6, 0, 425) 회전 [0, 0, 0] 스케일 [10.4, 11.0, 0.5]
+  Pedestal_Plinth                    StaticMeshActor              폴더 Museum/Pedestals     위치 (0, 0, 4) 회전 [0, 0, 0] 스케일 [0.58, 0.58, 0.08]
+  Portal_To_Hall                     BP_Portal_C                  폴더 None                 위치 (-245, 0, 0) 회전 [0, 0, 0] 스케일 [1.0, 1.0, 1.0]
+  DirectionalLight                   DirectionalLight             폴더 None                 위치 (100, -200, 570) 회전 [-50, -38, 36] 스케일 [2.5, 2.5, 2.5]
+  LightmassImportanceVolume          LightmassImportanceVolume    폴더 None                 위치 (500, 0, 120) 회전 [0, 0, 0] 스케일 [1.0, 1.0, 1.0]
+  PointLight4                        PointLight                   폴더 None                 위치 (1000, 0, 60) 회전 [0, 0, 0] 스케일 [1.0, 1.0, 1.0]
+  PointLight5                        PointLight                   폴더 None                 위치 (1447, 0, 102) 회전 [0, 0, 0] 스케일 [1.0, 1.0, 1.0]
+  SkyLight                           SkyLight                     폴더 None                 위치 (21, -31, 505) 회전 [0, 0, 0] 스케일 [1.0, 1.0, 1.0]
+----------------------------------------------------------------------
+월드 세팅: WorldToMeters 100.0  KillZ -1048575.0
+----------------------------------------------------------------------
+콘텐츠 폴더 (/Game/Museum 아래): ['/Game/Museum/Artifacts', '/Game/Museum/Blueprints', '/Game/Museum/Fonts', '/Game/Museum/Inwang', '/Game/Museum/LLP_HandTracking.LLP_HandTracking', '/Game/Museum/Levels', '/Game/Museum/M_InwangVertexUnlit.M_InwangVertexUnlit', '/Game/Museum/Materials', '/Game/Museum/UI']

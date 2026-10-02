@@ -1,0 +1,153 @@
+diff --git a/src/models/autoencoders/autoencoder_kl_triposg.py b/src/models/autoencoders/autoencoder_kl_triposg.py
+index 6aafff9..ba16382 100755
+--- a/src/models/autoencoders/autoencoder_kl_triposg.py
++++ b/src/models/autoencoders/autoencoder_kl_triposg.py
+@@ -12,7 +12,6 @@ from diffusers.models.normalization import FP32LayerNorm, LayerNorm
+ from diffusers.utils import logging
+ from diffusers.utils.accelerate_utils import apply_forward_hook
+ from einops import repeat
+-from torch_cluster import fps
+ from tqdm import tqdm
+ 
+ from ..attention_processor import FusedTripoSGAttnProcessor2_0, TripoSGAttnProcessor2_0, FlashTripo2AttnProcessor2_0
+@@ -423,6 +422,10 @@ class TripoSGVAEModel(ModelMixin, ConfigMixin):
+         )
+ 
+         # fps sampling
++        # Image-to-mesh inference only uses the decoder; require this optional
++        # native extension only when encoding an existing point cloud.
++        from torch_cluster import fps
++
+         sampling_ratio = 1.0 / 4
+         sampled_indices = fps(
+             flattened_points[:, :3],
+diff --git a/src/pipelines/pipeline_partcrafter.py b/src/pipelines/pipeline_partcrafter.py
+index 2c6794b..d45fd4a 100755
+--- a/src/pipelines/pipeline_partcrafter.py
++++ b/src/pipelines/pipeline_partcrafter.py
+@@ -338,7 +338,8 @@ class PartCrafterPipeline(DiffusionPipeline, TransformerDiffusionMixin):
+                         # verbose=True
+                     )
+                     mesh = trimesh.Trimesh(mesh_v_f[0].astype(np.float32), mesh_v_f[1])
+-                except:
++                except Exception as exc:
++                    print(f"Mesh extraction failed for part {i}: {type(exc).__name__}: {exc}", flush=True)
+                     mesh_v_f = None
+                     mesh = None
+                 output.append(mesh_v_f)
+diff --git a/scripts/test_laptop.py b/scripts/test_laptop.py
+new file mode 100644
+index 0000000..7556a38
+--- /dev/null
++++ b/scripts/test_laptop.py
+@@ -0,0 +1,109 @@
++"""Conservative, reproducible image-to-parts smoke test (no external image API)."""
++import argparse
++import hashlib
++import json
++from pathlib import Path
++import sys
++import time
++
++ROOT = Path(__file__).resolve().parents[1]
++sys.path.insert(0, str(ROOT))
++
++def main():
++    parser = argparse.ArgumentParser()
++    parser.add_argument('--source', required=True)
++    parser.add_argument('--output', default='results/laptop_71489_p2')
++    parser.add_argument('--num-parts', type=int, default=2)
++    parser.add_argument('--num-tokens', type=int, default=512)
++    parser.add_argument('--steps', type=int, default=50)
++    parser.add_argument('--seed', type=int, default=0)
++    parser.add_argument('--dense-depth', type=int, default=8)
++    parser.add_argument('--hierarchical-depth', type=int, default=9)
++    parser.add_argument('--max-expanded-coords', type=int, default=30000000)
++    args = parser.parse_args()
++    import torch
++    from PIL import Image
++    from huggingface_hub import snapshot_download
++    from src.models.briarmbg import BriaRMBG
++    from src.utils.image_utils import prepare_image
++    from src.pipelines.pipeline_partcrafter import PartCrafterPipeline
++    import numpy as np
++    import trimesh
++
++    out = ROOT / args.output
++    out.mkdir(parents=True, exist_ok=True)
++    source = Path(args.source)
++    record = dict(source=str(source), sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
++                  artifact='71489', crop=[180, 95, 460, 390], num_parts=args.num_parts,
++                  num_tokens=args.num_tokens, seed=args.seed, steps=args.steps,
++                  dense_depth=args.dense_depth, hierarchical_depth=args.hierarchical_depth,
++                  max_expanded_coords=args.max_expanded_coords,
++                  status='started', torch=torch.__version__,
++                  gpu=torch.cuda.get_device_name(0))
++    def save():
++        (out / 'manifest.json').write_text(json.dumps(record, indent=2), encoding='utf-8')
++    save()
++    start = time.monotonic()
++    try:
++        original = Image.open(source)
++        if original.size != (1280, 480):
++            raise ValueError('Crop is only valid for the confirmed 1280x480 composite.')
++        original.crop(tuple(record['crop'])).save(out / 'photo_crop.png')
++        print('Downloading official weights', flush=True)
++        model_dir = snapshot_download('wgsxm/PartCrafter', local_dir=ROOT / 'pretrained_weights/PartCrafter')
++        bg_dir = snapshot_download('briaai/RMBG-1.4', local_dir=ROOT / 'pretrained_weights/RMBG-1.4',
++                                   allow_patterns=['config.json', 'model.safetensors', 'pytorch_model.bin'])
++        bg = BriaRMBG.from_pretrained(bg_dir).to('cuda').eval()
++        with torch.inference_mode():
++            prepared = prepare_image(str(out / 'photo_crop.png'), bg_color=np.array([1., 1., 1.]), rmbg_net=bg)
++        prepared.save(out / 'input.png')
++        del bg
++        torch.cuda.empty_cache()
++        print('Loading pipeline with CPU offload', flush=True)
++        pipe = PartCrafterPipeline.from_pretrained(model_dir, torch_dtype=torch.float16)
++        # from_pretrained(torch_dtype=...) converts checkpoint parameters but the
++        # non-persistent positional-frequency buffer is created as float32.
++        # Cast modules and buffers before installing the CPU-offload hooks.
++        pipe.to(dtype=torch.float16)
++        dtype_check = {
++            'latent_target': str(torch.float16),
++            'vae_post_quant': str(pipe.vae.post_quant.weight.dtype),
++            'vae_query_projection': str(pipe.vae.decoder.proj_query.weight.dtype),
++            'vae_position_frequencies': str(pipe.vae.embedder.frequencies.dtype),
++        }
++        record['dtype_check'] = dtype_check
++        if len(set(dtype_check.values())) != 1:
++            raise RuntimeError(f'Pipeline dtype mismatch before offload: {dtype_check}')
++        pipe.model_cpu_offload_seq = 'image_encoder_dinov2->transformer->vae'
++        pipe.enable_model_cpu_offload()
++        torch.cuda.reset_peak_memory_stats()
++        with torch.inference_mode():
++            meshes = pipe(image=[prepared] * args.num_parts,
++                          attention_kwargs={'num_parts': args.num_parts}, num_tokens=args.num_tokens,
++                          generator=torch.Generator(device='cuda').manual_seed(args.seed),
++                          num_inference_steps=args.steps, guidance_scale=7., use_flash_decoder=False,
++                          dense_octree_depth=args.dense_depth,
++                          hierarchical_octree_depth=args.hierarchical_depth,
++                          max_num_expanded_coords=args.max_expanded_coords).meshes
++        scene = trimesh.Scene()
++        stats = []
++        for i, mesh in enumerate(meshes):
++            if mesh is None or not len(mesh.faces):
++                raise RuntimeError(f'Part {i} is empty; no dummy mesh substituted.')
++            colors = ([70, 155, 220, 255], [230, 135, 65, 255], [80, 190, 125, 255], [180, 100, 210, 255])
++            mesh.visual.face_colors = colors[i % len(colors)]
++            mesh.export(out / f'part_{i:02d}.glb')
++            scene.add_geometry(mesh, node_name=f'part_{i:02d}')
++            stats.append(dict(vertices=len(mesh.vertices), faces=len(mesh.faces)))
++        scene.export(out / 'object.glb')
++        record.update(status='complete', parts=stats)
++    except Exception as exc:
++        record.update(status='failed', error=repr(exc))
++        raise
++    finally:
++        record.update(elapsed_seconds=time.monotonic() - start,
++                      peak_vram_bytes=torch.cuda.max_memory_allocated())
++        save()
++
++if __name__ == '__main__':
++    main()
+
