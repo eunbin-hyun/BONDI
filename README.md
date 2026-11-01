@@ -13,6 +13,7 @@
 | 대상 기기 | Meta Quest 2 · PC VR 스트리밍 |
 | 핵심 기술 | TRELLIS.2, AdaPoinTr, Blender, Unreal Engine 5, OpenXR, SteamVR, ALVR |
 | 프로젝트 키 | `S15P21C201` |
+| 수상 | 2026 SSAFY 15기 2학기 특화 프로젝트 우수상 · 광주 2반 2등 |
 
 `본디`는 “본래의 모양이나 처지”라는 뜻입니다. BONDI는 훼손된 유물을 역사적 정답으로 단정하지 않고, 사진과 3D 데이터에서 만든 **AI 복원 가설**을 관람자가 직접 비교하고 체험할 수 있게 합니다.
 
